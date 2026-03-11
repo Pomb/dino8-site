@@ -25,7 +25,7 @@
       background: var(--bg);
       color: var(--text);
       font-family: "SF Mono", "Fira Code", "Consolas", monospace;
-      font-size: 14px;
+      font-size: 16px;
       line-height: 1.6;
     }
 
@@ -38,8 +38,8 @@
       position: sticky;
       top: 0;
       height: 100vh;
-      width: 200px;
-      min-width: 200px;
+      width: 220px;
+      min-width: 220px;
       overflow-y: auto;
       padding: 1.25rem 1rem;
       background: var(--bg2);
@@ -78,7 +78,7 @@
 
     main {
       flex: 1;
-      max-width: 760px;
+      max-width: 860px;
       padding: 2rem 2.5rem;
     }
 
@@ -171,6 +171,101 @@
       color: rgba(0,0,0,0.6);
     }
 
+    .search-box {
+      margin-bottom: 1rem;
+      padding-bottom: 0.75rem;
+      border-bottom: 1px solid #2a2040;
+    }
+
+    .search-box input {
+      width: 100%;
+      background: var(--bg);
+      border: 1px solid #2a2040;
+      border-radius: 3px;
+      color: var(--text);
+      font-family: inherit;
+      font-size: 0.75rem;
+      padding: 0.35rem 0.5rem;
+      outline: none;
+    }
+
+    .search-box input::placeholder { color: #4a4060; }
+    .search-box input:focus { border-color: var(--accent); }
+
+    .search-hint {
+      font-size: 0.65rem;
+      color: #4a4060;
+      margin-top: 0.3rem;
+    }
+
+    .conf-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 0.8rem;
+      margin-bottom: 1rem;
+      table-layout: fixed;
+    }
+
+    .conf-table th,
+    .conf-table td { padding: 0.4rem 0.6rem; }
+
+    .conf-table th {
+      text-align: left;
+      color: var(--accent);
+      border-bottom: 1px solid #2a2040;
+      font-weight: normal;
+      font-size: 0.75rem;
+      letter-spacing: 0.05em;
+    }
+
+    .conf-table td {
+      border-bottom: 1px solid #1a1228;
+      color: var(--dim);
+    }
+
+    .conf-table th:first-child,
+    .conf-table td:first-child {
+      width: 30%;
+      color: var(--yellow);
+      white-space: nowrap;
+    }
+
+    .conf-table th:nth-child(2),
+    .conf-table td:nth-child(2) {
+      width: 14%;
+      color: var(--text);
+      white-space: nowrap;
+    }
+
+    .conf-table th:nth-child(3),
+    .conf-table td:nth-child(3) {
+      width: 56%;
+    }
+
+    .conf-subsection {
+      font-size: 0.85rem;
+      color: var(--accent);
+      margin: 1.25rem 0 0.5rem;
+    }
+
+    .conf-example {
+      background: var(--bg2);
+      border: 1px solid #2a2040;
+      border-radius: 4px;
+      padding: 1rem;
+      overflow-x: auto;
+      font-size: 0.8rem;
+      line-height: 1.5;
+      margin-bottom: 1rem;
+    }
+
+    .conf-example .c-kw { color: var(--red); }
+    .conf-example .c-str { color: var(--green); }
+    .conf-example .c-num { color: var(--orange); }
+    .conf-example .c-comment { color: var(--dim); }
+
+    .hidden { display: none !important; }
+
     @media (max-width: 700px) {
       .layout { flex-direction: column; }
       nav {
@@ -188,6 +283,12 @@
   <div class="layout">
     <nav>
       <a href="index.html" class="back">&larr; Back to Dino8</a>
+      <div class="search-box">
+        <input type="text" id="search" placeholder="Search API..." autocomplete="off" spellcheck="false">
+        <div class="search-hint" id="search-hint"></div>
+      </div>
+      <h3>PROJECT</h3>
+      <a href="#conf">Configuration</a>
       <h3>CORE</h3>
       <a href="#globals">Globals</a>
       <a href="#callbacks">Callbacks</a>
@@ -232,6 +333,132 @@
         <h1>DINO8 API REFERENCE</h1>
         <p>Complete Lua API for the Dino8 game engine.</p>
       </header>
+
+      <!-- CONFIGURATION -->
+      <div class="section" id="conf">
+        <h2>CONFIGURATION</h2>
+        <div class="note">Every project has a <code>conf.lua</code> that returns a table describing the game. This is where you set the title, resolution, assets, filters, and more.</div>
+
+<pre class="conf-example"><span class="c-kw">return</span> {
+  title       = <span class="c-str">"my-game"</span>,
+  author      = <span class="c-str">"you"</span>,
+  version     = <span class="c-str">"1.0.0"</span>,
+  width       = <span class="c-num">128</span>,
+  height      = <span class="c-num">128</span>,
+  scale       = <span class="c-num">4</span>,
+  entry       = <span class="c-str">"main.d8"</span>,
+
+  assets = {
+    sprites = <span class="c-str">"assets/sprites.png"</span>,
+    map     = <span class="c-str">"assets/map.json"</span>,
+    music   = { <span class="c-str">"assets/music/*.wav"</span> },
+  },
+}</pre>
+
+        <h3 class="conf-subsection">Metadata</h3>
+        <table class="conf-table">
+          <tr><th>Field</th><th>Default</th><th>Description</th></tr>
+          <tr><td>title</td><td>"dino8"</td><td>Game title, shown in window title bar and used for save data.</td></tr>
+          <tr><td>author</td><td>"Unknown"</td><td>Creator name.</td></tr>
+          <tr><td>version</td><td>"0.1.0"</td><td>Semantic version string.</td></tr>
+          <tr><td>description</td><td>"A retro game engine"</td><td>Short project description.</td></tr>
+          <tr><td>type</td><td>"game"</td><td>Project type: <code>"game"</code>, <code>"tool"</code>, or <code>"data"</code>.</td></tr>
+          <tr><td>tags</td><td>nil</td><td>Array of tag strings for categorization.</td></tr>
+          <tr><td>thumbnail</td><td>nil</td><td>Path to a thumbnail image file.</td></tr>
+          <tr><td>entry</td><td>"main.d8"</td><td>Entry script file, relative to the project directory.</td></tr>
+        </table>
+
+        <h3 class="conf-subsection">Display</h3>
+        <table class="conf-table">
+          <tr><th>Field</th><th>Default</th><th>Description</th></tr>
+          <tr><td>width</td><td>128</td><td>Canvas width in pixels.</td></tr>
+          <tr><td>height</td><td>128</td><td>Canvas height in pixels.</td></tr>
+          <tr><td>scale</td><td>4</td><td>Window scale multiplier.</td></tr>
+          <tr><td>fullscreen</td><td>false</td><td>Start in fullscreen mode.</td></tr>
+          <tr><td>speed</td><td>1.0</td><td>Game speed multiplier (0.5 = half speed, 2.0 = double).</td></tr>
+          <tr><td>gif_scale</td><td>2</td><td>Scale factor for GIF capture output.</td></tr>
+        </table>
+
+        <h3 class="conf-subsection">Assets</h3>
+        <table class="conf-table">
+          <tr><th>Field</th><th>Default</th><th>Description</th></tr>
+          <tr><td>assets.sprites</td><td>nil</td><td>Path to sprite sheet PNG.</td></tr>
+          <tr><td>assets.map</td><td>nil</td><td>Path to tilemap JSON file.</td></tr>
+          <tr><td>assets.music</td><td>nil</td><td>Array of music file paths. Supports wildcards.</td></tr>
+        </table>
+
+        <h3 class="conf-subsection">SFX Clips</h3>
+        <div class="fn-desc" style="margin-bottom:0.5rem">Named sound effect clips with optional randomized pitch and volume.</div>
+<pre class="conf-example">sfx_clips = {
+  jump = {
+    path   = <span class="c-str">"assets/sfx/jump_*.wav"</span>,
+    pitch  = { <span class="c-num">0.9</span>, <span class="c-num">1.1</span> },
+    volume = <span class="c-num">0.5</span>,
+  },
+  menu = {
+    navigate = <span class="c-str">"click"</span>,
+    select   = <span class="c-str">"confirm"</span>,
+    back     = <span class="c-str">"cancel"</span>,
+  },
+}</pre>
+        <table class="conf-table">
+          <tr><th>Field</th><th>Default</th><th>Description</th></tr>
+          <tr><td>sfx_clips.&lt;name&gt;.path</td><td>&mdash;</td><td>Wildcard path to sound files (e.g. <code>"sfx/hit_*.wav"</code>).</td></tr>
+          <tr><td>sfx_clips.&lt;name&gt;.pitch</td><td>1.0</td><td>Fixed number or <code>{min, max}</code> range for random pitch.</td></tr>
+          <tr><td>sfx_clips.&lt;name&gt;.volume</td><td>1.0</td><td>Fixed number or <code>{min, max}</code> range for random volume.</td></tr>
+          <tr><td>sfx_clips.menu.navigate</td><td>nil</td><td>Clip name to play for pause menu navigation.</td></tr>
+          <tr><td>sfx_clips.menu.select</td><td>nil</td><td>Clip name to play for pause menu selection.</td></tr>
+          <tr><td>sfx_clips.menu.back</td><td>nil</td><td>Clip name to play for pause menu back/cancel.</td></tr>
+        </table>
+
+        <h3 class="conf-subsection">Filters</h3>
+        <div class="fn-desc" style="margin-bottom:0.5rem">Post-processing filters applied to the rendered frame.</div>
+        <table class="conf-table">
+          <tr><th>Field</th><th>Default</th><th>Description</th></tr>
+          <tr><td>filters.upscale.type</td><td>none</td><td>Upscale filter: <code>"scale2x"</code>, <code>"hq2x"</code>, <code>"hq3x"</code>, <code>"hq4x"</code>, or <code>"xbrz"</code>.</td></tr>
+          <tr><td>filters.scanline.enabled</td><td>false</td><td>Enable scanline effect.</td></tr>
+          <tr><td>filters.scanline.intensity</td><td>0.2</td><td>Scanline intensity (0.0&ndash;1.0).</td></tr>
+          <tr><td>filters.crt.enabled</td><td>false</td><td>Enable CRT screen effect.</td></tr>
+          <tr><td>filters.crt.curvature</td><td>0.1</td><td>CRT screen curvature amount.</td></tr>
+          <tr><td>filters.crt.glow</td><td>0.2</td><td>CRT glow intensity.</td></tr>
+          <tr><td>filters.chromatic.enabled</td><td>false</td><td>Enable chromatic aberration.</td></tr>
+          <tr><td>filters.chromatic.intensity</td><td>0.5</td><td>Chromatic aberration intensity.</td></tr>
+        </table>
+
+        <h3 class="conf-subsection">Custom Palette</h3>
+        <div class="fn-desc" style="margin-bottom:0.5rem">Replace the default Dawnbringer 16 palette with your own colors (max 254).</div>
+<pre class="conf-example">palette = { <span class="c-num">0x000000</span>, <span class="c-num">0x1D2B53</span>, <span class="c-num">0x7E2553</span>, <span class="c-num">0x008751</span>, <span class="c-comment">-- ...</span> }</pre>
+
+        <h3 class="conf-subsection">Custom Fonts</h3>
+        <div class="fn-desc" style="margin-bottom:0.5rem">Load additional font styles (indices 1&ndash;2 are reserved for the built-in font).</div>
+<pre class="conf-example">font_styles = {
+  { font = <span class="c-str">"assets/myfont.ttf"</span>, size = <span class="c-num">12</span>, line_height = <span class="c-num">14</span>, kerning = <span class="c-num">0</span> },
+}</pre>
+        <table class="conf-table">
+          <tr><th>Field</th><th>Default</th><th>Description</th></tr>
+          <tr><td>font_styles[n].font</td><td>&mdash;</td><td>Path to a TTF font file.</td></tr>
+          <tr><td>font_styles[n].size</td><td>10</td><td>Font size in pixels.</td></tr>
+          <tr><td>font_styles[n].line_height</td><td>0</td><td>Line height (0 = font default).</td></tr>
+          <tr><td>font_styles[n].kerning</td><td>0</td><td>Extra letter spacing in pixels.</td></tr>
+        </table>
+
+        <h3 class="conf-subsection">Mobile</h3>
+        <table class="conf-table">
+          <tr><th>Field</th><th>Default</th><th>Description</th></tr>
+          <tr><td>orientation</td><td>"landscape"</td><td>Screen orientation: <code>"landscape"</code>, <code>"portrait"</code>, or <code>"both"</code>.</td></tr>
+          <tr><td>mobile_controls</td><td>true</td><td>Show on-screen virtual touch controls.</td></tr>
+          <tr><td>render_offset</td><td>0.5</td><td>Vertical position of the game canvas (0 = top, 0.5 = center, 1 = bottom).</td></tr>
+        </table>
+
+        <h3 class="conf-subsection">Publishing</h3>
+        <div class="fn-desc" style="margin-bottom:0.5rem">Used by <code>dino8 push</code> to upload to itch.io.</div>
+        <table class="conf-table">
+          <tr><th>Field</th><th>Default</th><th>Description</th></tr>
+          <tr><td>itch.user</td><td>nil</td><td>Your itch.io username.</td></tr>
+          <tr><td>itch.game</td><td>nil</td><td>Your itch.io game slug.</td></tr>
+          <tr><td>itch.channel</td><td>"html5"</td><td>Upload channel.</td></tr>
+        </table>
+      </div>
 
       <!-- GLOBALS -->
       <div class="section" id="globals">
@@ -1063,5 +1290,112 @@
 
     </main>
   </div>
+  <script>
+    (function() {
+      var input = document.getElementById('search');
+      var hint = document.getElementById('search-hint');
+      var sections = document.querySelectorAll('.section');
+      var navLinks = document.querySelectorAll('nav a:not(.back)');
+      var navHeadings = document.querySelectorAll('nav h3');
+
+      input.addEventListener('input', function() {
+        var q = this.value.toLowerCase().trim();
+
+        if (!q) {
+          sections.forEach(function(s) { s.classList.remove('hidden'); });
+          sections.forEach(function(s) {
+            s.querySelectorAll('.fn, .global').forEach(function(el) { el.classList.remove('hidden'); });
+          });
+          navLinks.forEach(function(a) { a.classList.remove('hidden'); });
+          navHeadings.forEach(function(h) { h.classList.remove('hidden'); });
+          hint.textContent = '';
+          return;
+        }
+
+        var totalMatches = 0;
+
+        sections.forEach(function(sec) {
+          var items = sec.querySelectorAll('.fn, .global');
+          var sectionMatches = 0;
+
+          if (items.length === 0) {
+            // Section with no fn/global items — match against section text
+            var text = sec.textContent.toLowerCase();
+            if (text.indexOf(q) !== -1) {
+              sec.classList.remove('hidden');
+              sectionMatches = 1;
+            } else {
+              sec.classList.add('hidden');
+            }
+          } else {
+            items.forEach(function(item) {
+              var text = item.textContent.toLowerCase();
+              if (text.indexOf(q) !== -1) {
+                item.classList.remove('hidden');
+                sectionMatches++;
+              } else {
+                item.classList.add('hidden');
+              }
+            });
+
+            if (sectionMatches > 0) {
+              sec.classList.remove('hidden');
+            } else {
+              sec.classList.add('hidden');
+            }
+          }
+
+          totalMatches += sectionMatches;
+        });
+
+        // Update nav visibility to match visible sections
+        navLinks.forEach(function(a) {
+          var href = a.getAttribute('href');
+          if (!href) return;
+          var id = href.replace('#', '');
+          var target = document.getElementById(id);
+          if (target && target.classList.contains('hidden')) {
+            a.classList.add('hidden');
+          } else {
+            a.classList.remove('hidden');
+          }
+        });
+
+        // Hide nav headings if all their links are hidden
+        navHeadings.forEach(function(h) {
+          var next = h.nextElementSibling;
+          var anyVisible = false;
+          while (next && next.tagName !== 'H3') {
+            if (next.tagName === 'A' && !next.classList.contains('hidden') && !next.classList.contains('back')) {
+              anyVisible = true;
+              break;
+            }
+            next = next.nextElementSibling;
+          }
+          if (anyVisible) {
+            h.classList.remove('hidden');
+          } else {
+            h.classList.add('hidden');
+          }
+        });
+
+        hint.textContent = totalMatches === 0 ? 'No results' : totalMatches + ' match' + (totalMatches === 1 ? '' : 'es');
+      });
+
+      // Focus search on Ctrl+K or /
+      document.addEventListener('keydown', function(e) {
+        if ((e.ctrlKey && e.key === 'k') || (e.key === '/' && document.activeElement.tagName !== 'INPUT')) {
+          e.preventDefault();
+          input.focus();
+          input.select();
+        }
+        if (e.key === 'Escape' && document.activeElement === input) {
+          input.value = '';
+          input.dispatchEvent(new Event('input'));
+          input.blur();
+        }
+      });
+    })();
+  </script>
 </body>
 </html>

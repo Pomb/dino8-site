@@ -1,0 +1,30 @@
+-- demo
+-- Main entry point
+
+-- Add lib directory to package path for require()
+local dir = get_project_dir()
+package.path = package.path .. ";" .. dir .. "/?.lua;" .. dir .. "/?/init.lua"
+
+-- Load modules
+local utils = require("lib.utils")
+
+function _init()
+	log(utils.hello())
+end
+
+function _update()
+	-- Update game logic here
+end
+
+-- World rendering (affected by camera)
+function _render()
+	cls(0)
+	-- Draw world objects here
+	circf(64, 64, 10, 11)
+end
+
+-- UI rendering (not affected by camera)
+function _ui()
+	print("demo", 10, 10, 7)
+	print(utils.hello(), 10, 20, 11)
+end
