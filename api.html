@@ -1,0 +1,1067 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Dino8 API Reference</title>
+  <style>
+    :root {
+      --bg: #140C1C;
+      --bg2: #1a1228;
+      --text: #DEEED6;
+      --dim: #8595A1;
+      --accent: #6DC2CA;
+      --green: #6DAA2C;
+      --orange: #D27D2C;
+      --red: #D04648;
+      --blue: #597DCE;
+      --yellow: #DAD45E;
+      --brown: #854C30;
+    }
+
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: "SF Mono", "Fira Code", "Consolas", monospace;
+      font-size: 14px;
+      line-height: 1.6;
+    }
+
+    .layout {
+      display: flex;
+      min-height: 100vh;
+    }
+
+    nav {
+      position: sticky;
+      top: 0;
+      height: 100vh;
+      width: 200px;
+      min-width: 200px;
+      overflow-y: auto;
+      padding: 1.25rem 1rem;
+      background: var(--bg2);
+      border-right: 1px solid #2a2040;
+    }
+
+    nav .back {
+      display: block;
+      color: var(--dim);
+      text-decoration: none;
+      font-size: 0.8rem;
+      margin-bottom: 1rem;
+      padding-bottom: 0.75rem;
+      border-bottom: 1px solid #2a2040;
+    }
+
+    nav .back:hover { color: var(--accent); }
+
+    nav h3 {
+      font-size: 0.7rem;
+      color: var(--orange);
+      letter-spacing: 0.08em;
+      margin: 0.75rem 0 0.3rem;
+    }
+
+    nav a {
+      display: block;
+      color: var(--dim);
+      text-decoration: none;
+      font-size: 0.75rem;
+      padding: 0.1rem 0;
+      transition: color 0.1s;
+    }
+
+    nav a:hover { color: var(--accent); }
+
+    main {
+      flex: 1;
+      max-width: 760px;
+      padding: 2rem 2.5rem;
+    }
+
+    header h1 {
+      font-size: 1.5rem;
+      color: var(--accent);
+      letter-spacing: 0.1em;
+      margin-bottom: 0.25rem;
+    }
+
+    header p {
+      color: var(--dim);
+      font-size: 0.85rem;
+      margin-bottom: 2rem;
+    }
+
+    .section { margin-bottom: 2.5rem; }
+
+    .section h2 {
+      font-size: 1rem;
+      color: var(--orange);
+      letter-spacing: 0.05em;
+      padding-bottom: 0.4rem;
+      border-bottom: 1px solid #2a2040;
+      margin-bottom: 1rem;
+    }
+
+    .note {
+      background: var(--bg2);
+      border: 1px solid #2a2040;
+      border-left: 3px solid var(--brown);
+      border-radius: 3px;
+      padding: 0.6rem 0.8rem;
+      font-size: 0.8rem;
+      color: var(--dim);
+      margin-bottom: 1rem;
+    }
+
+    .fn {
+      margin-bottom: 1rem;
+      padding: 0.5rem 0;
+      border-bottom: 1px solid #1a1228;
+    }
+
+    .fn:last-child { border-bottom: none; }
+
+    .fn-sig {
+      font-size: 0.85rem;
+      margin-bottom: 0.2rem;
+    }
+
+    .fn-name { color: var(--accent); }
+    .fn-param { color: var(--yellow); }
+    .fn-opt { color: var(--dim); }
+    .fn-ret { color: var(--green); font-size: 0.8rem; }
+    .fn-desc {
+      color: var(--dim);
+      font-size: 0.8rem;
+      margin-top: 0.15rem;
+    }
+
+    .global {
+      margin-bottom: 0.75rem;
+    }
+
+    .global-name { color: var(--yellow); font-size: 0.85rem; }
+    .global-type { color: var(--dim); font-size: 0.8rem; }
+    .global-desc { color: var(--dim); font-size: 0.8rem; }
+
+    .palette-strip {
+      display: flex;
+      height: 20px;
+      border-radius: 3px;
+      overflow: hidden;
+      margin: 0.5rem 0;
+    }
+
+    .palette-strip span {
+      flex: 1;
+      position: relative;
+    }
+
+    .palette-strip span::after {
+      content: attr(data-i);
+      position: absolute;
+      bottom: 1px;
+      left: 50%;
+      transform: translateX(-50%);
+      font-size: 8px;
+      color: rgba(0,0,0,0.6);
+    }
+
+    @media (max-width: 700px) {
+      .layout { flex-direction: column; }
+      nav {
+        position: static;
+        width: 100%;
+        height: auto;
+        border-right: none;
+        border-bottom: 1px solid #2a2040;
+      }
+      main { padding: 1.5rem; }
+    }
+  </style>
+</head>
+<body>
+  <div class="layout">
+    <nav>
+      <a href="index.html" class="back">&larr; Back to Dino8</a>
+      <h3>CORE</h3>
+      <a href="#globals">Globals</a>
+      <a href="#callbacks">Callbacks</a>
+      <h3>GRAPHICS</h3>
+      <a href="#drawing">Drawing</a>
+      <a href="#palette">Palette</a>
+      <a href="#text">Text</a>
+      <a href="#sprites">Sprites</a>
+      <a href="#camera">Camera</a>
+      <a href="#clipping">Clipping</a>
+      <a href="#render-targets">Render Targets</a>
+      <a href="#snapshot">Snapshot</a>
+      <a href="#filters">Filters</a>
+      <h3>INPUT</h3>
+      <a href="#keyboard">Keyboard &amp; Buttons</a>
+      <a href="#mouse">Mouse</a>
+      <a href="#gamepad">Gamepad</a>
+      <a href="#touch">Touch &amp; Mobile</a>
+      <h3>AUDIO</h3>
+      <a href="#sfx">Sound Effects</a>
+      <a href="#music">Music</a>
+      <h3>DATA</h3>
+      <a href="#tables">Table Utilities</a>
+      <a href="#math">Math</a>
+      <a href="#persistence">Persistence</a>
+      <a href="#file-io">File I/O</a>
+      <h3>WORLD</h3>
+      <a href="#levels">Levels &amp; Tilemaps</a>
+      <h3>SYSTEM</h3>
+      <a href="#window">Window</a>
+      <a href="#time">Time</a>
+      <a href="#platform">Platform</a>
+      <a href="#gif">GIF Capture</a>
+      <a href="#screenshot">Screenshot</a>
+      <a href="#notifications">Notifications</a>
+      <a href="#menu">Pause Menu</a>
+      <a href="#console">Console &amp; Loading</a>
+    </nav>
+
+    <main>
+      <header>
+        <h1>DINO8 API REFERENCE</h1>
+        <p>Complete Lua API for the Dino8 fantasy console engine.</p>
+      </header>
+
+      <!-- GLOBALS -->
+      <div class="section" id="globals">
+        <h2>GLOBALS</h2>
+        <div class="global">
+          <span class="global-name">T</span> <span class="global-type">number</span>
+          <div class="global-desc">Time in seconds since startup</div>
+        </div>
+        <div class="global">
+          <span class="global-name">DT</span> <span class="global-type">number</span>
+          <div class="global-desc">Delta time between frames in seconds</div>
+        </div>
+        <div class="global">
+          <span class="global-name">PLATFORM</span> <span class="global-type">table</span>
+          <div class="global-desc">.name ("desktop"|"mobile"|"web"), .os, .is_mobile, .is_web, .is_desktop</div>
+        </div>
+        <div class="global">
+          <span class="global-name">INPUT_GLYPH</span> <span class="global-type">table</span>
+          <div class="global-desc">.UP .DOWN .LEFT .RIGHT .ACTION_A .ACTION_B .ESCAPE &mdash; context-aware input icons</div>
+        </div>
+      </div>
+
+      <!-- CALLBACKS -->
+      <div class="section" id="callbacks">
+        <h2>CALLBACKS</h2>
+        <div class="note">Define these functions in your game. The engine calls them automatically.</div>
+        <div class="fn">
+          <div class="fn-sig"><span class="fn-name">_init</span>()</div>
+          <div class="fn-desc">Called once at startup for initialization</div>
+        </div>
+        <div class="fn">
+          <div class="fn-sig"><span class="fn-name">_update</span>()</div>
+          <div class="fn-desc">Called every frame to update game logic</div>
+        </div>
+        <div class="fn">
+          <div class="fn-sig"><span class="fn-name">_render</span>()</div>
+          <div class="fn-desc">Called every frame to render world graphics (affected by camera)</div>
+        </div>
+        <div class="fn">
+          <div class="fn-sig"><span class="fn-name">_ui</span>()</div>
+          <div class="fn-desc">Called every frame to render UI (NOT affected by camera)</div>
+        </div>
+        <div class="fn">
+          <div class="fn-sig"><span class="fn-name">_orientation_changed</span>(<span class="fn-param">orientation</span>)</div>
+          <div class="fn-desc">Called when device orientation changes. orientation: "portrait" | "landscape"</div>
+        </div>
+        <div class="fn">
+          <div class="fn-sig"><span class="fn-name">_input_changed</span>(<span class="fn-param">mode</span>)</div>
+          <div class="fn-desc">Called when input mode changes. mode: "keyboard" | "touch" | "gamepad"</div>
+        </div>
+      </div>
+
+      <!-- DRAWING -->
+      <div class="section" id="drawing">
+        <h2>DRAWING</h2>
+        <div class="note">Colors can be a palette index (1-16) or raw 0xRRGGBB. Passing a color sets the pen color for subsequent calls.</div>
+        <div class="fn">
+          <div class="fn-sig"><span class="fn-name">cls</span>(<span class="fn-opt">[color]</span>)</div>
+          <div class="fn-desc">Clear screen. Defaults to palette color 1.</div>
+        </div>
+        <div class="fn">
+          <div class="fn-sig"><span class="fn-name">pset</span>(<span class="fn-param">x</span>, <span class="fn-param">y</span>, <span class="fn-opt">[color]</span>)</div>
+          <div class="fn-desc">Set pixel at (x, y)</div>
+        </div>
+        <div class="fn">
+          <div class="fn-sig"><span class="fn-name">pget</span>(<span class="fn-param">x</span>, <span class="fn-param">y</span>)</div>
+          <div class="fn-ret">&rarr; number</div>
+          <div class="fn-desc">Get color of pixel at (x, y)</div>
+        </div>
+        <div class="fn">
+          <div class="fn-sig"><span class="fn-name">line</span>(<span class="fn-opt">[x0, y0]</span>, <span class="fn-param">x1</span>, <span class="fn-param">y1</span>, <span class="fn-opt">[color]</span>)</div>
+          <div class="fn-desc">Draw line. Multiple argument patterns supported.</div>
+        </div>
+        <div class="fn">
+          <div class="fn-sig"><span class="fn-name">circ</span>(<span class="fn-param">cx</span>, <span class="fn-param">cy</span>, <span class="fn-opt">[r]</span>, <span class="fn-opt">[color]</span>)</div>
+          <div class="fn-desc">Draw circle outline. Default radius: 4</div>
+        </div>
+        <div class="fn">
+          <div class="fn-sig"><span class="fn-name">circf</span>(<span class="fn-param">cx</span>, <span class="fn-param">cy</span>, <span class="fn-opt">[r]</span>, <span class="fn-opt">[color]</span>)</div>
+          <div class="fn-desc">Draw filled circle</div>
+        </div>
+        <div class="fn">
+          <div class="fn-sig"><span class="fn-name">rect</span>(<span class="fn-param">x0</span>, <span class="fn-param">y0</span>, <span class="fn-param">x1</span>, <span class="fn-param">y1</span>, <span class="fn-opt">[color]</span>)</div>
+          <div class="fn-desc">Draw rectangle outline</div>
+        </div>
+        <div class="fn">
+          <div class="fn-sig"><span class="fn-name">rectf</span>(<span class="fn-param">x0</span>, <span class="fn-param">y0</span>, <span class="fn-param">x1</span>, <span class="fn-param">y1</span>, <span class="fn-opt">[color]</span>)</div>
+          <div class="fn-desc">Draw filled rectangle</div>
+        </div>
+        <div class="fn">
+          <div class="fn-sig"><span class="fn-name">checker</span>(<span class="fn-param">x</span>, <span class="fn-param">y</span>, <span class="fn-param">w</span>, <span class="fn-param">h</span>, <span class="fn-param">cell_size</span>, <span class="fn-param">color1</span>, <span class="fn-opt">[color2]</span>)</div>
+          <div class="fn-desc">Draw checkerboard pattern</div>
+        </div>
+        <div class="fn">
+          <div class="fn-sig"><span class="fn-name">color</span>(<span class="fn-opt">[c]</span>)</div>
+          <div class="fn-ret">&rarr; number (when getting)</div>
+          <div class="fn-desc">Set or get current pen color</div>
+        </div>
+      </div>
+
+      <!-- PALETTE -->
+      <div class="section" id="palette">
+        <h2>PALETTE</h2>
+        <div class="palette-strip">
+          <span style="background:#140C1C" data-i="1"></span>
+          <span style="background:#442434" data-i="2"></span>
+          <span style="background:#30346D" data-i="3"></span>
+          <span style="background:#4E4A4E" data-i="4"></span>
+          <span style="background:#854C30" data-i="5"></span>
+          <span style="background:#346524" data-i="6"></span>
+          <span style="background:#D04648" data-i="7"></span>
+          <span style="background:#757161" data-i="8"></span>
+          <span style="background:#597DCE" data-i="9"></span>
+          <span style="background:#D27D2C" data-i="10"></span>
+          <span style="background:#8595A1" data-i="11"></span>
+          <span style="background:#6DAA2C" data-i="12"></span>
+          <span style="background:#D2AA99" data-i="13"></span>
+          <span style="background:#6DC2CA" data-i="14"></span>
+          <span style="background:#DAD45E" data-i="15"></span>
+          <span style="background:#DEEED6" data-i="16"></span>
+        </div>
+        <div class="note">Default: Dawnbringer 16. Custom palettes can be set in conf.lua or at runtime.</div>
+        <div class="fn">
+          <div class="fn-sig"><span class="fn-name">pal</span>(<span class="fn-opt">[c0, c1]</span>)</div>
+          <div class="fn-desc">Map draw color c0 to appear as c1. No args resets.</div>
+        </div>
+        <div class="fn">
+          <div class="fn-sig"><span class="fn-name">pals</span>(<span class="fn-opt">[palette_table]</span>)</div>
+          <div class="fn-desc">Enable shift mode: shapes remap existing pixels through the table. No args disables.</div>
+        </div>
+        <div class="fn">
+          <div class="fn-sig"><span class="fn-name">set_palette</span>(<span class="fn-param">colors</span>)</div>
+          <div class="fn-desc">Replace base 16-color palette. colors: array of 16 values in 0xRRGGBB format.</div>
+        </div>
+        <div class="fn">
+          <div class="fn-sig"><span class="fn-name">get_palette</span>()</div>
+          <div class="fn-ret">&rarr; table</div>
+          <div class="fn-desc">Get current base palette as array of 16 0xRRGGBB values</div>
+        </div>
+      </div>
+
+      <!-- TEXT -->
+      <div class="section" id="text">
+        <h2>TEXT</h2>
+        <div class="fn">
+          <div class="fn-sig"><span class="fn-name">print</span>(<span class="fn-param">text</span>, <span class="fn-param">x</span>, <span class="fn-param">y</span>, <span class="fn-opt">[color]</span>, <span class="fn-opt">[bg_color]</span>)</div>
+          <div class="fn-desc">Print text at position</div>
+        </div>
+        <div class="fn">
+          <div class="fn-sig"><span class="fn-name">text_width</span>(<span class="fn-param">text</span>)</div>
+          <div class="fn-ret">&rarr; number</div>
+          <div class="fn-desc">Get pixel width of text string</div>
+        </div>
+        <div class="fn">
+          <div class="fn-sig"><span class="fn-name">font_style</span>(<span class="fn-opt">[index]</span>)</div>
+          <div class="fn-ret">&rarr; number (when getting)</div>
+          <div class="fn-desc">Set or get current font style (1-based index)</div>
+        </div>
+        <div class="fn">
+          <div class="fn-sig"><span class="fn-name">font_style_count</span>()</div>
+          <div class="fn-ret">&rarr; number</div>
+          <div class="fn-desc">Number of available font styles</div>
+        </div>
+        <div class="fn">
+          <div class="fn-sig"><span class="fn-name">line_height</span>()</div>
+          <div class="fn-ret">&rarr; number</div>
+          <div class="fn-desc">Line height in pixels for current font</div>
+        </div>
+        <div class="fn">
+          <div class="fn-sig"><span class="fn-name">kerning</span>()</div>
+          <div class="fn-ret">&rarr; number</div>
+          <div class="fn-desc">Extra letter spacing in pixels for current font</div>
+        </div>
+      </div>
+
+      <!-- SPRITES -->
+      <div class="section" id="sprites">
+        <h2>SPRITES</h2>
+        <div class="fn">
+          <div class="fn-sig"><span class="fn-name">load_image</span>(<span class="fn-param">filename</span>)</div>
+          <div class="fn-ret">&rarr; number | nil</div>
+          <div class="fn-desc">Load image file (PNG, JPG). Returns image ID.</div>
+        </div>
+        <div class="fn">
+          <div class="fn-sig"><span class="fn-name">spr</span>(<span class="fn-param">id</span>, <span class="fn-param">dx</span>, <span class="fn-param">dy</span>, <span class="fn-opt">[flip_x]</span>, <span class="fn-opt">[flip_y]</span>)</div>
+          <div class="fn-desc">Draw full image at position</div>
+        </div>
+        <div class="fn">
+          <div class="fn-sig"><span class="fn-name">spr</span>(<span class="fn-param">id</span>, <span class="fn-param">sx</span>, <span class="fn-param">sy</span>, <span class="fn-param">sw</span>, <span class="fn-param">sh</span>, <span class="fn-param">dx</span>, <span class="fn-param">dy</span>, <span class="fn-opt">[dw, dh, flip_x, flip_y]</span>)</div>
+          <div class="fn-desc">Draw sub-region of image (atlas-style) with optional scaling and flip</div>
+        </div>
+        <div class="fn">
+          <div class="fn-sig"><span class="fn-name">sprq</span>(<span class="fn-param">id</span>, <span class="fn-param">src_quad</span>, <span class="fn-param">dst_quad</span>)</div>
+          <div class="fn-desc">Draw textured quad with affine mapping. Quads: {x1,y1, x2,y2, x3,y3, x4,y4}</div>
+        </div>
+        <div class="fn">
+          <div class="fn-sig"><span class="fn-name">unload_image</span>(<span class="fn-param">id</span>)</div>
+          <div class="fn-desc">Free image memory</div>
+        </div>
+      </div>
+
+      <!-- CAMERA -->
+      <div class="section" id="camera">
+        <h2>CAMERA</h2>
+        <div class="fn">
+          <div class="fn-sig"><span class="fn-name">cam_set</span>(<span class="fn-param">x</span>, <span class="fn-param">y</span>)</div>
+          <div class="fn-desc">Set camera position</div>
+        </div>
+        <div class="fn">
+          <div class="fn-sig"><span class="fn-name">cam_get</span>()</div>
+          <div class="fn-ret">&rarr; x, y</div>
+          <div class="fn-desc">Get camera position</div>
+        </div>
+        <div class="fn">
+          <div class="fn-sig"><span class="fn-name">cam_reset</span>() / <span class="fn-name">cam</span>()</div>
+          <div class="fn-desc">Reset camera to (0, 0)</div>
+        </div>
+        <div class="fn">
+          <div class="fn-sig"><span class="fn-name">cam_translate</span>(<span class="fn-param">x</span>, <span class="fn-param">y</span>)</div>
+          <div class="fn-desc">Move camera relatively</div>
+        </div>
+        <div class="fn">
+          <div class="fn-sig"><span class="fn-name">cam_scale</span>(<span class="fn-param">sx</span>, <span class="fn-opt">[sy]</span>)</div>
+          <div class="fn-desc">Zoom camera. sy defaults to sx.</div>
+        </div>
+        <div class="fn">
+          <div class="fn-sig"><span class="fn-name">cam_follow</span>(<span class="fn-param">target_x</span>, <span class="fn-param">target_y</span>, <span class="fn-opt">[follow_time]</span>)</div>
+          <div class="fn-desc">Smooth camera following. follow_time: seconds to reach target (default 1.0)</div>
+        </div>
+        <div class="fn">
+          <div class="fn-sig"><span class="fn-name">cam_offset</span>(<span class="fn-param">x</span>, <span class="fn-param">y</span>)</div>
+          <div class="fn-desc">Set offset from follow target</div>
+        </div>
+        <div class="fn">
+          <div class="fn-sig"><span class="fn-name">cam_shake</span>(<span class="fn-param">intensity</span>, <span class="fn-param">duration</span>)</div>
+          <div class="fn-desc">Screen shake. Decays over duration seconds.</div>
+        </div>
+        <div class="fn">
+          <div class="fn-sig"><span class="fn-name">cam_bounds</span>(<span class="fn-param">x1</span>, <span class="fn-param">y1</span>, <span class="fn-param">x2</span>, <span class="fn-param">y2</span>)</div>
+          <div class="fn-desc">Set camera movement boundaries</div>
+        </div>
+        <div class="fn">
+          <div class="fn-sig"><span class="fn-name">cam_push</span>() / <span class="fn-name">cam_pop</span>()</div>
+          <div class="fn-desc">Save/restore camera state to stack</div>
+        </div>
+      </div>
+
+      <!-- CLIPPING -->
+      <div class="section" id="clipping">
+        <h2>CLIPPING</h2>
+        <div class="fn">
+          <div class="fn-sig"><span class="fn-name">clip</span>(<span class="fn-opt">[x, y, w, h]</span>)</div>
+          <div class="fn-desc">Set clipping rectangle. No args resets to full screen.</div>
+        </div>
+      </div>
+
+      <!-- RENDER TARGETS -->
+      <div class="section" id="render-targets">
+        <h2>RENDER TARGETS</h2>
+        <div class="note">Offscreen buffers (slots 1-8). Color -2 is transparent.</div>
+        <div class="fn">
+          <div class="fn-sig"><span class="fn-name">rt_create</span>(<span class="fn-param">slot</span>, <span class="fn-param">width</span>, <span class="fn-param">height</span>)</div>
+          <div class="fn-desc">Create render target in slot (1-8)</div>
+        </div>
+        <div class="fn">
+          <div class="fn-sig"><span class="fn-name">rt_destroy</span>(<span class="fn-param">slot</span>)</div>
+          <div class="fn-desc">Free render target</div>
+        </div>
+        <div class="fn">
+          <div class="fn-sig"><span class="fn-name">rt_clear</span>(<span class="fn-param">slot</span>)</div>
+          <div class="fn-desc">Clear to transparent</div>
+        </div>
+        <div class="fn">
+          <div class="fn-sig"><span class="fn-name">rt_target</span>(<span class="fn-opt">[slot]</span>)</div>
+          <div class="fn-desc">Redirect drawing to slot. No args resets to screen.</div>
+        </div>
+        <div class="fn">
+          <div class="fn-sig"><span class="fn-name">rt_draw</span>(<span class="fn-param">slot</span>, <span class="fn-param">x</span>, <span class="fn-param">y</span>)</div>
+          <div class="fn-desc">Draw render target to current target</div>
+        </div>
+        <div class="fn">
+          <div class="fn-sig"><span class="fn-name">rt_save</span>(<span class="fn-param">slot</span>, <span class="fn-param">filename</span>)</div>
+          <div class="fn-ret">&rarr; boolean</div>
+          <div class="fn-desc">Save as PNG with alpha</div>
+        </div>
+        <div class="fn">
+          <div class="fn-sig"><span class="fn-name">rt_width</span>(<span class="fn-param">slot</span>) / <span class="fn-name">rt_height</span>(<span class="fn-param">slot</span>)</div>
+          <div class="fn-ret">&rarr; number</div>
+          <div class="fn-desc">Get dimensions (0 if not created)</div>
+        </div>
+      </div>
+
+      <!-- SNAPSHOT -->
+      <div class="section" id="snapshot">
+        <h2>SNAPSHOT</h2>
+        <div class="fn">
+          <div class="fn-sig"><span class="fn-name">snap</span>()</div>
+          <div class="fn-desc">Capture current screen to snapshot buffer</div>
+        </div>
+        <div class="fn">
+          <div class="fn-sig"><span class="fn-name">snap_draw</span>(<span class="fn-param">sx</span>, <span class="fn-param">sy</span>, <span class="fn-param">sw</span>, <span class="fn-param">sh</span>, <span class="fn-param">dx</span>, <span class="fn-param">dy</span>)</div>
+          <div class="fn-desc">Draw portion of snapshot (atlas-style)</div>
+        </div>
+        <div class="fn">
+          <div class="fn-sig"><span class="fn-name">snap_clear</span>()</div>
+          <div class="fn-desc">Clear snapshot and free memory</div>
+        </div>
+      </div>
+
+      <!-- FILTERS -->
+      <div class="section" id="filters">
+        <h2>FILTERS</h2>
+        <div class="note">Available filters: "hqx", "crt", "chromatic"</div>
+        <div class="fn">
+          <div class="fn-sig"><span class="fn-name">filter_enable</span>(<span class="fn-param">name</span>) / <span class="fn-name">filter_disable</span>(<span class="fn-param">name</span>) / <span class="fn-name">filter_toggle</span>(<span class="fn-param">name</span>)</div>
+          <div class="fn-desc">Control filter state</div>
+        </div>
+        <div class="fn">
+          <div class="fn-sig"><span class="fn-name">filter_is_enabled</span>(<span class="fn-param">name</span>)</div>
+          <div class="fn-ret">&rarr; boolean</div>
+          <div class="fn-desc">Check if filter is active</div>
+        </div>
+        <div class="fn">
+          <div class="fn-sig"><span class="fn-name">filter_settings</span>(<span class="fn-param">opts</span>)</div>
+          <div class="fn-desc">Configure filter. hqx: {scale=2|3|4}, crt: {scanline, curvature}, chromatic: {intensity}</div>
+        </div>
+        <div class="fn">
+          <div class="fn-sig"><span class="fn-name">filter_get_settings</span>(<span class="fn-param">name</span>)</div>
+          <div class="fn-ret">&rarr; table</div>
+          <div class="fn-desc">Get current filter settings</div>
+        </div>
+      </div>
+
+      <!-- KEYBOARD & BUTTONS -->
+      <div class="section" id="keyboard">
+        <h2>KEYBOARD &amp; BUTTONS</h2>
+        <div class="fn">
+          <div class="fn-sig"><span class="fn-name">btn</span>(<span class="fn-param">input</span>)</div>
+          <div class="fn-ret">&rarr; boolean</div>
+          <div class="fn-desc">True if key/button is held. input: key name ("a", "space", "left") or player number (0-7)</div>
+        </div>
+        <div class="fn">
+          <div class="fn-sig"><span class="fn-name">btnp</span>(<span class="fn-param">input</span>)</div>
+          <div class="fn-ret">&rarr; boolean</div>
+          <div class="fn-desc">True if just pressed (with auto-repeat). Default: 250ms initial, 100ms repeat.</div>
+        </div>
+        <div class="fn">
+          <div class="fn-sig"><span class="fn-name">get_btnp</span>()</div>
+          <div class="fn-ret">&rarr; string | nil</div>
+          <div class="fn-desc">Get any key pressed this frame</div>
+        </div>
+        <div class="fn">
+          <div class="fn-sig"><span class="fn-name">set_repeat_rates</span>(<span class="fn-opt">[initial_ms, repeat_ms]</span>)</div>
+          <div class="fn-desc">Set btnp auto-repeat timing. No args resets to defaults.</div>
+        </div>
+        <div class="fn">
+          <div class="fn-sig"><span class="fn-name">get_repeat_rates</span>()</div>
+          <div class="fn-ret">&rarr; initial_ms, repeat_ms</div>
+          <div class="fn-desc">Get current repeat rates</div>
+        </div>
+        <div class="fn">
+          <div class="fn-sig"><span class="fn-name">get_input_mode</span>()</div>
+          <div class="fn-ret">&rarr; "keyboard" | "touch" | "gamepad"</div>
+          <div class="fn-desc">Current input mode (auto-switches based on last device used)</div>
+        </div>
+      </div>
+
+      <!-- MOUSE -->
+      <div class="section" id="mouse">
+        <h2>MOUSE</h2>
+        <div class="fn">
+          <div class="fn-sig"><span class="fn-name">mouse_x</span>() / <span class="fn-name">mouse_y</span>()</div>
+          <div class="fn-ret">&rarr; number</div>
+          <div class="fn-desc">Current mouse position in screen pixels</div>
+        </div>
+        <div class="fn">
+          <div class="fn-sig"><span class="fn-name">mouse_btn</span>(<span class="fn-param">button</span>)</div>
+          <div class="fn-ret">&rarr; boolean</div>
+          <div class="fn-desc">True if mouse button held. 1=left, 2=right, 3=middle</div>
+        </div>
+        <div class="fn">
+          <div class="fn-sig"><span class="fn-name">mouse_btnp</span>(<span class="fn-param">button</span>)</div>
+          <div class="fn-ret">&rarr; boolean</div>
+          <div class="fn-desc">True if mouse button just pressed this frame</div>
+        </div>
+        <div class="fn">
+          <div class="fn-sig">btn(<span class="fn-param">"mouse_left"</span>) / btn(<span class="fn-param">"mouse_right"</span>) / btn(<span class="fn-param">"mouse_middle"</span>)</div>
+          <div class="fn-desc">Alternative: mouse buttons via btn/btnp (also "mouse1", "mouse2", "mouse3")</div>
+        </div>
+      </div>
+
+      <!-- GAMEPAD -->
+      <div class="section" id="gamepad">
+        <h2>GAMEPAD</h2>
+        <div class="fn">
+          <div class="fn-sig"><span class="fn-name">gamepad_connected</span>()</div>
+          <div class="fn-ret">&rarr; boolean</div>
+          <div class="fn-desc">True if a gamepad is connected</div>
+        </div>
+        <div class="fn">
+          <div class="fn-sig"><span class="fn-name">gamepad_name</span>()</div>
+          <div class="fn-ret">&rarr; string | nil</div>
+          <div class="fn-desc">Controller name, or nil</div>
+        </div>
+      </div>
+
+      <!-- TOUCH & MOBILE -->
+      <div class="section" id="touch">
+        <h2>TOUCH &amp; MOBILE</h2>
+        <div class="fn">
+          <div class="fn-sig"><span class="fn-name">open_keyboard</span>() / <span class="fn-name">close_keyboard</span>()</div>
+          <div class="fn-desc">Show/hide on-screen keyboard (no-op on desktop)</div>
+        </div>
+        <div class="fn">
+          <div class="fn-sig"><span class="fn-name">keyboard_height</span>()</div>
+          <div class="fn-ret">&rarr; number</div>
+          <div class="fn-desc">Keyboard height in pixels (0 on desktop or when hidden)</div>
+        </div>
+        <div class="fn">
+          <div class="fn-sig"><span class="fn-name">set_render_offset</span>(<span class="fn-param">offset</span>)</div>
+          <div class="fn-desc">Position game within black bars (0.0=top/left, 0.5=center, 1.0=bottom/right)</div>
+        </div>
+        <div class="fn">
+          <div class="fn-sig"><span class="fn-name">get_render_offset</span>()</div>
+          <div class="fn-ret">&rarr; number</div>
+          <div class="fn-desc">Get current render offset (0-1)</div>
+        </div>
+      </div>
+
+      <!-- SFX -->
+      <div class="section" id="sfx">
+        <h2>SOUND EFFECTS</h2>
+        <div class="fn">
+          <div class="fn-sig"><span class="fn-name">load_sfx</span>(<span class="fn-param">filename</span>, <span class="fn-opt">[pitch]</span>, <span class="fn-opt">[volume]</span>)</div>
+          <div class="fn-ret">&rarr; number | nil</div>
+          <div class="fn-desc">Load sound. Supports wildcards ("*.wav"). pitch/volume: number or {min, max} for randomization.</div>
+        </div>
+        <div class="fn">
+          <div class="fn-sig"><span class="fn-name">sfx</span>(<span class="fn-param">sfx_id</span>, <span class="fn-opt">[volume]</span>, <span class="fn-opt">[pitch]</span>)</div>
+          <div class="fn-desc">Play sound effect. nil sfx_id is safely ignored.</div>
+        </div>
+        <div class="fn">
+          <div class="fn-sig"><span class="fn-name">stop_sfx</span>(<span class="fn-opt">[channel]</span>, <span class="fn-opt">[fade_time]</span>)</div>
+          <div class="fn-desc">Stop sound effects. fade_time in seconds (0 = immediate).</div>
+        </div>
+        <div class="fn">
+          <div class="fn-sig"><span class="fn-name">set_sfx_volume</span>(<span class="fn-param">volume</span>)</div>
+          <div class="fn-desc">Set global SFX volume (0.0-1.0)</div>
+        </div>
+        <div class="fn">
+          <div class="fn-sig"><span class="fn-name">unload_sfx</span>(<span class="fn-param">sfx_id</span>)</div>
+          <div class="fn-desc">Free sound memory</div>
+        </div>
+        <div class="fn">
+          <div class="fn-sig"><span class="fn-name">get_sfx_count</span>(<span class="fn-param">sfx_id</span>)</div>
+          <div class="fn-ret">&rarr; number</div>
+          <div class="fn-desc">Number of loaded audio file variations for this sfx</div>
+        </div>
+      </div>
+
+      <!-- MUSIC -->
+      <div class="section" id="music">
+        <h2>MUSIC</h2>
+        <div class="fn">
+          <div class="fn-sig"><span class="fn-name">load_music</span>(<span class="fn-param">filename</span>)</div>
+          <div class="fn-ret">&rarr; number | nil</div>
+          <div class="fn-desc">Load music file (WAV, OGG, MP3)</div>
+        </div>
+        <div class="fn">
+          <div class="fn-sig"><span class="fn-name">music</span>(<span class="fn-param">music_id</span>, <span class="fn-opt">[volume]</span>, <span class="fn-opt">[loop]</span>)</div>
+          <div class="fn-desc">Play music. loop defaults to true.</div>
+        </div>
+        <div class="fn">
+          <div class="fn-sig"><span class="fn-name">stop_music</span>(<span class="fn-opt">[fade_time]</span>)</div>
+          <div class="fn-desc">Stop music. fade_time in seconds.</div>
+        </div>
+        <div class="fn">
+          <div class="fn-sig"><span class="fn-name">pause_music</span>() / <span class="fn-name">resume_music</span>()</div>
+          <div class="fn-desc">Pause/resume music playback</div>
+        </div>
+        <div class="fn">
+          <div class="fn-sig"><span class="fn-name">is_music_playing</span>()</div>
+          <div class="fn-ret">&rarr; boolean</div>
+          <div class="fn-desc">Check if music is playing</div>
+        </div>
+        <div class="fn">
+          <div class="fn-sig"><span class="fn-name">set_music_volume</span>(<span class="fn-param">volume</span>)</div>
+          <div class="fn-desc">Set global music volume (0.0-1.0)</div>
+        </div>
+        <div class="fn">
+          <div class="fn-sig"><span class="fn-name">unload_music</span>(<span class="fn-param">music_id</span>)</div>
+          <div class="fn-desc">Free music memory</div>
+        </div>
+      </div>
+
+      <!-- TABLE UTILITIES -->
+      <div class="section" id="tables">
+        <h2>TABLE UTILITIES</h2>
+        <div class="note">PICO-8 style table helpers.</div>
+        <div class="fn">
+          <div class="fn-sig"><span class="fn-name">add</span>(<span class="fn-param">t</span>, <span class="fn-param">v</span>, <span class="fn-opt">[i]</span>)</div>
+          <div class="fn-ret">&rarr; value</div>
+          <div class="fn-desc">Append value (or insert at index i)</div>
+        </div>
+        <div class="fn">
+          <div class="fn-sig"><span class="fn-name">del</span>(<span class="fn-param">t</span>, <span class="fn-param">v</span>)</div>
+          <div class="fn-ret">&rarr; value | nil</div>
+          <div class="fn-desc">Delete first occurrence of value</div>
+        </div>
+        <div class="fn">
+          <div class="fn-sig"><span class="fn-name">deli</span>(<span class="fn-param">t</span>, <span class="fn-opt">[i]</span>)</div>
+          <div class="fn-ret">&rarr; value | nil</div>
+          <div class="fn-desc">Delete element at index (defaults to last)</div>
+        </div>
+        <div class="fn">
+          <div class="fn-sig"><span class="fn-name">count</span>(<span class="fn-param">t</span>, <span class="fn-opt">[v]</span>)</div>
+          <div class="fn-ret">&rarr; number</div>
+          <div class="fn-desc">Count elements, or occurrences of v</div>
+        </div>
+        <div class="fn">
+          <div class="fn-sig"><span class="fn-name">foreach</span>(<span class="fn-param">t</span>, <span class="fn-param">fn</span>)</div>
+          <div class="fn-desc">Call fn(v) for each element</div>
+        </div>
+        <div class="fn">
+          <div class="fn-sig"><span class="fn-name">all</span>(<span class="fn-param">t</span>)</div>
+          <div class="fn-ret">&rarr; iterator</div>
+          <div class="fn-desc">Iterator for use with for...in loops</div>
+        </div>
+      </div>
+
+      <!-- MATH -->
+      <div class="section" id="math">
+        <h2>MATH</h2>
+        <div class="fn">
+          <div class="fn-sig"><span class="fn-name">sin</span>(<span class="fn-param">angle</span>) / <span class="fn-name">cos</span>(<span class="fn-param">angle</span>)</div>
+          <div class="fn-ret">&rarr; number</div>
+          <div class="fn-desc">Trig functions (radians)</div>
+        </div>
+        <div class="fn">
+          <div class="fn-sig"><span class="fn-name">atan2</span>(<span class="fn-param">y</span>, <span class="fn-param">x</span>)</div>
+          <div class="fn-ret">&rarr; number</div>
+          <div class="fn-desc">Arctangent of y/x in radians</div>
+        </div>
+        <div class="fn">
+          <div class="fn-sig"><span class="fn-name">sqrt</span>(<span class="fn-param">v</span>) / <span class="fn-name">abs</span>(<span class="fn-param">v</span>)</div>
+          <div class="fn-ret">&rarr; number</div>
+          <div class="fn-desc">Square root / absolute value</div>
+        </div>
+        <div class="fn">
+          <div class="fn-sig"><span class="fn-name">min</span>(<span class="fn-param">a</span>, <span class="fn-param">b</span>) / <span class="fn-name">max</span>(<span class="fn-param">a</span>, <span class="fn-param">b</span>)</div>
+          <div class="fn-ret">&rarr; number</div>
+          <div class="fn-desc">Minimum / maximum of two values</div>
+        </div>
+        <div class="fn">
+          <div class="fn-sig"><span class="fn-name">mid</span>(<span class="fn-param">a</span>, <span class="fn-param">b</span>, <span class="fn-param">c</span>)</div>
+          <div class="fn-ret">&rarr; number</div>
+          <div class="fn-desc">Middle value of three numbers</div>
+        </div>
+        <div class="fn">
+          <div class="fn-sig"><span class="fn-name">flr</span>(<span class="fn-param">v</span>) / <span class="fn-name">ceil</span>(<span class="fn-param">v</span>)</div>
+          <div class="fn-ret">&rarr; number</div>
+          <div class="fn-desc">Floor / ceiling</div>
+        </div>
+        <div class="fn">
+          <div class="fn-sig"><span class="fn-name">rnd</span>(<span class="fn-opt">[max]</span>)</div>
+          <div class="fn-ret">&rarr; number</div>
+          <div class="fn-desc">Random number between 0 and max (default 1.0)</div>
+        </div>
+        <div class="fn">
+          <div class="fn-sig"><span class="fn-name">wrap</span>(<span class="fn-param">value</span>, <span class="fn-param">min</span>, <span class="fn-param">max</span>)</div>
+          <div class="fn-ret">&rarr; number</div>
+          <div class="fn-desc">Wrap value within [min, max] range (circular)</div>
+        </div>
+        <div class="fn">
+          <div class="fn-sig"><span class="fn-name">deg2rad</span>(<span class="fn-param">deg</span>) / <span class="fn-name">rad2deg</span>(<span class="fn-param">rad</span>)</div>
+          <div class="fn-ret">&rarr; number</div>
+          <div class="fn-desc">Angle conversion</div>
+        </div>
+      </div>
+
+      <!-- PERSISTENCE -->
+      <div class="section" id="persistence">
+        <h2>PERSISTENCE</h2>
+        <div class="note">Data persists across sessions. Desktop: platform-specific app data directory. Web: localStorage.</div>
+        <div class="fn">
+          <div class="fn-sig"><span class="fn-name">dget</span>(<span class="fn-param">key</span>)</div>
+          <div class="fn-ret">&rarr; string | nil</div>
+          <div class="fn-desc">Get persistent value by key</div>
+        </div>
+        <div class="fn">
+          <div class="fn-sig"><span class="fn-name">dset</span>(<span class="fn-param">key</span>, <span class="fn-param">value</span>)</div>
+          <div class="fn-desc">Set persistent value (auto-saved)</div>
+        </div>
+      </div>
+
+      <!-- FILE I/O -->
+      <div class="section" id="file-io">
+        <h2>FILE I/O</h2>
+        <div class="fn">
+          <div class="fn-sig"><span class="fn-name">read_file</span>(<span class="fn-param">filename</span>)</div>
+          <div class="fn-ret">&rarr; string | nil</div>
+          <div class="fn-desc">Read text file (relative to project dir)</div>
+        </div>
+        <div class="fn">
+          <div class="fn-sig"><span class="fn-name">write_file</span>(<span class="fn-param">filename</span>, <span class="fn-param">content</span>)</div>
+          <div class="fn-ret">&rarr; boolean</div>
+          <div class="fn-desc">Write text file</div>
+        </div>
+        <div class="fn">
+          <div class="fn-sig"><span class="fn-name">append_file</span>(<span class="fn-param">filename</span>, <span class="fn-param">content</span>)</div>
+          <div class="fn-ret">&rarr; boolean</div>
+          <div class="fn-desc">Append to file</div>
+        </div>
+        <div class="fn">
+          <div class="fn-sig"><span class="fn-name">file_exists</span>(<span class="fn-param">filename</span>) / <span class="fn-name">dir_exists</span>(<span class="fn-param">path</span>)</div>
+          <div class="fn-ret">&rarr; boolean</div>
+          <div class="fn-desc">Check existence</div>
+        </div>
+        <div class="fn">
+          <div class="fn-sig"><span class="fn-name">delete_file</span>(<span class="fn-param">filename</span>)</div>
+          <div class="fn-ret">&rarr; boolean</div>
+          <div class="fn-desc">Delete a file</div>
+        </div>
+        <div class="fn">
+          <div class="fn-sig"><span class="fn-name">create_dir</span>(<span class="fn-param">path</span>)</div>
+          <div class="fn-ret">&rarr; boolean</div>
+          <div class="fn-desc">Create directory</div>
+        </div>
+        <div class="fn">
+          <div class="fn-sig"><span class="fn-name">list_dir</span>(<span class="fn-param">path</span>)</div>
+          <div class="fn-ret">&rarr; table</div>
+          <div class="fn-desc">List files in directory</div>
+        </div>
+        <div class="fn">
+          <div class="fn-sig"><span class="fn-name">get_project_dir</span>()</div>
+          <div class="fn-ret">&rarr; string</div>
+          <div class="fn-desc">Get project directory path</div>
+        </div>
+        <div class="fn">
+          <div class="fn-sig"><span class="fn-name">export_screen_png</span>(<span class="fn-param">filename</span>)</div>
+          <div class="fn-ret">&rarr; boolean</div>
+          <div class="fn-desc">Export current screen as PNG</div>
+        </div>
+        <div class="fn">
+          <div class="fn-sig"><span class="fn-name">export_palette</span>(<span class="fn-param">filename</span>)</div>
+          <div class="fn-ret">&rarr; boolean</div>
+          <div class="fn-desc">Export palette as JSON</div>
+        </div>
+      </div>
+
+      <!-- LEVELS -->
+      <div class="section" id="levels">
+        <h2>LEVELS &amp; TILEMAPS</h2>
+        <div class="fn">
+          <div class="fn-sig"><span class="fn-name">create_level</span>(<span class="fn-param">level_data</span>)</div>
+          <div class="fn-ret">&rarr; number</div>
+          <div class="fn-desc">Create level from data table {width, height, grid_size, tileset, tiles, camera_x?, camera_y?}</div>
+        </div>
+        <div class="fn">
+          <div class="fn-sig"><span class="fn-name">load_level_tiles</span>(<span class="fn-param">level_id</span>, <span class="fn-param">tiles_data</span>)</div>
+          <div class="fn-desc">Load tile data into existing level</div>
+        </div>
+        <div class="fn">
+          <div class="fn-sig"><span class="fn-name">get_tile</span>(<span class="fn-param">level_id</span>, <span class="fn-param">x</span>, <span class="fn-param">y</span>)</div>
+          <div class="fn-ret">&rarr; number</div>
+          <div class="fn-desc">Get tile ID at cell (x, y). 0-based coords.</div>
+        </div>
+        <div class="fn">
+          <div class="fn-sig"><span class="fn-name">set_tile</span>(<span class="fn-param">level_id</span>, <span class="fn-param">x</span>, <span class="fn-param">y</span>, <span class="fn-param">tile_id</span>)</div>
+          <div class="fn-desc">Set tile (0 = empty, 1+ = sprite index)</div>
+        </div>
+        <div class="fn">
+          <div class="fn-sig"><span class="fn-name">draw_level</span>(<span class="fn-param">level_id</span>, <span class="fn-param">cell_x</span>, <span class="fn-param">cell_y</span>, <span class="fn-param">screen_x</span>, <span class="fn-param">screen_y</span>, <span class="fn-param">cell_w</span>, <span class="fn-param">cell_h</span>)</div>
+          <div class="fn-desc">Draw level region to screen</div>
+        </div>
+        <div class="fn">
+          <div class="fn-sig"><span class="fn-name">get_level_info</span>(<span class="fn-param">level_id</span>)</div>
+          <div class="fn-ret">&rarr; width, height, grid_size</div>
+          <div class="fn-desc">Get level dimensions</div>
+        </div>
+        <div class="fn">
+          <div class="fn-sig"><span class="fn-name">destroy_level</span>(<span class="fn-param">level_id</span>)</div>
+          <div class="fn-desc">Free level memory</div>
+        </div>
+      </div>
+
+      <!-- WINDOW -->
+      <div class="section" id="window">
+        <h2>WINDOW</h2>
+        <div class="fn">
+          <div class="fn-sig"><span class="fn-name">screen_size</span>()</div>
+          <div class="fn-ret">&rarr; width, height</div>
+          <div class="fn-desc">Get screen dimensions from conf.lua</div>
+        </div>
+        <div class="fn">
+          <div class="fn-sig"><span class="fn-name">get_fullscreen</span>() / <span class="fn-name">set_fullscreen</span>(<span class="fn-param">bool</span>) / <span class="fn-name">toggle_fullscreen</span>()</div>
+          <div class="fn-desc">Fullscreen control</div>
+        </div>
+        <div class="fn">
+          <div class="fn-sig"><span class="fn-name">get_window_title</span>() / <span class="fn-name">set_window_title</span>(<span class="fn-param">title</span>)</div>
+          <div class="fn-desc">Window title control</div>
+        </div>
+      </div>
+
+      <!-- TIME -->
+      <div class="section" id="time">
+        <h2>TIME</h2>
+        <div class="fn">
+          <div class="fn-sig"><span class="fn-name">time</span>()</div>
+          <div class="fn-ret">&rarr; string</div>
+          <div class="fn-desc">Current system time as "HH:MM:SS"</div>
+        </div>
+        <div class="fn">
+          <div class="fn-sig"><span class="fn-name">t</span>()</div>
+          <div class="fn-ret">&rarr; number</div>
+          <div class="fn-desc">Seconds since engine start</div>
+        </div>
+        <div class="fn">
+          <div class="fn-sig"><span class="fn-name">fps</span>()</div>
+          <div class="fn-ret">&rarr; number</div>
+          <div class="fn-desc">Current frames per second</div>
+        </div>
+      </div>
+
+      <!-- PLATFORM -->
+      <div class="section" id="platform">
+        <h2>PLATFORM</h2>
+        <div class="fn">
+          <div class="fn-sig"><span class="fn-name">quit</span>()</div>
+          <div class="fn-desc">Exit the application (native only, no-op on web)</div>
+        </div>
+        <div class="fn">
+          <div class="fn-sig"><span class="fn-name">restart</span>()</div>
+          <div class="fn-desc">Restart the game (returns to boot screen)</div>
+        </div>
+      </div>
+
+      <!-- GIF -->
+      <div class="section" id="gif">
+        <h2>GIF CAPTURE</h2>
+        <div class="fn">
+          <div class="fn-sig"><span class="fn-name">gif_start</span>(<span class="fn-opt">[duration]</span>)</div>
+          <div class="fn-ret">&rarr; boolean</div>
+          <div class="fn-desc">Start recording (default 10s). Also F9 hotkey.</div>
+        </div>
+        <div class="fn">
+          <div class="fn-sig"><span class="fn-name">gif_stop</span>()</div>
+          <div class="fn-ret">&rarr; boolean</div>
+          <div class="fn-desc">Stop and save GIF</div>
+        </div>
+        <div class="fn">
+          <div class="fn-sig"><span class="fn-name">gif_recording</span>()</div>
+          <div class="fn-ret">&rarr; boolean</div>
+          <div class="fn-desc">Check if recording</div>
+        </div>
+        <div class="fn">
+          <div class="fn-sig"><span class="fn-name">gif_remaining</span>()</div>
+          <div class="fn-ret">&rarr; number</div>
+          <div class="fn-desc">Seconds of recording remaining</div>
+        </div>
+      </div>
+
+      <!-- SCREENSHOT -->
+      <div class="section" id="screenshot">
+        <h2>SCREENSHOT</h2>
+        <div class="fn">
+          <div class="fn-sig"><span class="fn-name">screenshot</span>(<span class="fn-opt">[filename]</span>)</div>
+          <div class="fn-ret">&rarr; boolean</div>
+          <div class="fn-desc">Save screenshot as PNG. Uses timestamp if no filename given.</div>
+        </div>
+      </div>
+
+      <!-- NOTIFICATIONS -->
+      <div class="section" id="notifications">
+        <h2>NOTIFICATIONS</h2>
+        <div class="fn">
+          <div class="fn-sig"><span class="fn-name">notify</span>(<span class="fn-param">message</span>, <span class="fn-opt">[options]</span>)</div>
+          <div class="fn-desc">Show slide-up notification. options: {value, col, vcol, bg}</div>
+        </div>
+      </div>
+
+      <!-- PAUSE MENU -->
+      <div class="section" id="menu">
+        <h2>PAUSE MENU</h2>
+        <div class="fn">
+          <div class="fn-sig"><span class="fn-name">menu_item</span>(<span class="fn-param">label</span>, <span class="fn-param">callback</span>)</div>
+          <div class="fn-desc">Add custom item to pause menu</div>
+        </div>
+        <div class="fn">
+          <div class="fn-sig"><span class="fn-name">menu_add</span>(<span class="fn-param">config</span>)</div>
+          <div class="fn-desc">Add submenu. config: {parent, label, submenu: {title, items}}</div>
+        </div>
+        <div class="fn">
+          <div class="fn-sig"><span class="fn-name">menu_add_item</span>(<span class="fn-param">config</span>)</div>
+          <div class="fn-desc">Add single item. config: {parent, label, type, value, options, min, max, step, on_changed}</div>
+        </div>
+        <div class="fn">
+          <div class="fn-sig"><span class="fn-name">menu_get</span>(<span class="fn-param">path</span>) / <span class="fn-name">menu_set</span>(<span class="fn-param">path</span>, <span class="fn-param">value</span>)</div>
+          <div class="fn-desc">Get/set menu item value. path: "main.settings.language" or "options.language"</div>
+        </div>
+        <div class="fn">
+          <div class="fn-sig"><span class="fn-name">menu_clear</span>()</div>
+          <div class="fn-desc">Remove all custom menu items and submenus</div>
+        </div>
+        <div class="note">Item types: "toggle" (boolean), "dropdown" (string + options[]), "range" (number + min/max/step), "action" (callback only)</div>
+      </div>
+
+      <!-- CONSOLE & LOADING -->
+      <div class="section" id="console">
+        <h2>CONSOLE &amp; LOADING</h2>
+        <div class="fn">
+          <div class="fn-sig"><span class="fn-name">log</span>(<span class="fn-param">message</span>)</div>
+          <div class="fn-desc">Log message to console (not screen)</div>
+        </div>
+        <div class="fn">
+          <div class="fn-sig"><span class="fn-name">set_loading</span>(<span class="fn-param">enabled</span>, <span class="fn-opt">[message]</span>)</div>
+          <div class="fn-desc">Show/hide loading screen</div>
+        </div>
+        <div class="fn">
+          <div class="fn-sig"><span class="fn-name">is_loading</span>()</div>
+          <div class="fn-ret">&rarr; boolean</div>
+          <div class="fn-desc">Check if loading is active</div>
+        </div>
+        <div class="fn">
+          <div class="fn-sig"><span class="fn-name">sleep</span>(<span class="fn-param">ms</span>)</div>
+          <div class="fn-desc">Delay execution for milliseconds</div>
+        </div>
+      </div>
+
+    </main>
+  </div>
+</body>
+</html>

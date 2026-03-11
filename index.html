@@ -211,6 +211,55 @@
       color: var(--accent);
     }
 
+    .tabs {
+      display: flex;
+      gap: 0;
+      margin-bottom: 0;
+    }
+
+    .tab {
+      font-family: inherit;
+      font-size: 0.8rem;
+      padding: 0.4rem 1rem;
+      background: transparent;
+      color: var(--dim);
+      border: 1px solid #2a2040;
+      border-bottom: none;
+      border-radius: 4px 4px 0 0;
+      cursor: pointer;
+      transition: background 0.15s, color 0.15s;
+    }
+
+    .tab:hover { color: var(--text); }
+
+    .tab.active {
+      background: var(--bg2);
+      color: var(--accent);
+      border-color: #2a2040;
+    }
+
+    .tabs + pre {
+      border-top-left-radius: 0;
+      margin-top: 0;
+    }
+
+    .api-link {
+      display: inline-block;
+      padding: 0.4rem 1.1rem;
+      font-family: inherit;
+      font-size: 0.85rem;
+      text-decoration: none;
+      border: 2px solid var(--accent);
+      color: var(--accent);
+      border-radius: 4px;
+      transition: background 0.15s, color 0.15s;
+    }
+
+    .api-link:hover {
+      background: var(--accent);
+      color: var(--bg);
+    }
+
     .palette-bar {
       display: flex;
       height: 6px;
@@ -228,8 +277,8 @@
   <div class="container">
     <header>
       <h1>DINO8</h1>
-      <div class="tagline">A minimal retro fantasy console</div>
       <span class="version">v0.3.1</span>
+      <div class="tagline">A minimal retro fantasy console</div>
     </header>
 
     <div class="palette-bar">
@@ -292,7 +341,12 @@
 
     <section>
       <h2>QUICK START</h2>
-<pre><span class="c-comment"># install dependencies (macOS)</span>
+      <div class="tabs">
+        <button class="tab active" onclick="showTab('macos')">macOS</button>
+        <button class="tab" onclick="showTab('linux')">Linux</button>
+        <button class="tab" onclick="showTab('windows')">Windows</button>
+      </div>
+<pre id="tab-macos"><span class="c-comment"># install dependencies</span>
 <span class="c-cmd">brew install</span> <span class="c-arg">sdl2 sdl2_ttf sdl2_image sdl2_mixer lua@5.4 libzip</span>
 
 <span class="c-comment"># build</span>
@@ -304,6 +358,34 @@
 
 <span class="c-comment"># run it</span>
 <span class="c-cmd">./build/dino8</span> <span class="c-arg">my-game/</span></pre>
+<pre id="tab-linux" style="display:none"><span class="c-comment"># install dependencies (Ubuntu/Debian)</span>
+<span class="c-cmd">sudo apt install</span> <span class="c-arg">build-essential libsdl2-dev libsdl2-ttf-dev \
+  libsdl2-image-dev libsdl2-mixer-dev liblua5.4-dev libzip-dev</span>
+
+<span class="c-comment"># build</span>
+<span class="c-cmd">git clone</span> <span class="c-str">https://github.com/Pomb/dino8.git</span>
+<span class="c-cmd">cd</span> dino8 && <span class="c-cmd">make</span>
+
+<span class="c-comment"># create a new game</span>
+<span class="c-cmd">./build/dino8</span> <span class="c-arg">create</span> my-game
+
+<span class="c-comment"># run it</span>
+<span class="c-cmd">./build/dino8</span> <span class="c-arg">my-game/</span></pre>
+<pre id="tab-windows" style="display:none"><span class="c-comment"># install MSYS2 from https://www.msys2.org</span>
+<span class="c-comment"># open MSYS2 MINGW64 terminal, then:</span>
+
+<span class="c-cmd">pacman -S</span> <span class="c-arg">mingw-w64-x86_64-{gcc,SDL2,SDL2_ttf,SDL2_image,\
+  SDL2_mixer,lua,libzip,pkg-config} make git</span>
+
+<span class="c-comment"># build</span>
+<span class="c-cmd">git clone</span> <span class="c-str">https://github.com/Pomb/dino8.git</span>
+<span class="c-cmd">cd</span> dino8 && <span class="c-cmd">make</span>
+
+<span class="c-comment"># create a new game</span>
+<span class="c-cmd">./build/dino8.exe</span> <span class="c-arg">create</span> my-game
+
+<span class="c-comment"># run it</span>
+<span class="c-cmd">./build/dino8.exe</span> <span class="c-arg">my-game/</span></pre>
     </section>
 
     <section>
@@ -324,6 +406,9 @@
   <span class="c-fn">circ</span>(x, y, <span class="c-num">4</span>, <span class="c-num">7</span>)
   <span class="c-fn">print</span>(<span class="c-str">"hello dino8"</span>, <span class="c-num">40</span>, <span class="c-num">10</span>, <span class="c-num">14</span>)
 <span class="c-kw">end</span></pre>
+      <div style="text-align:center; margin-top:1rem;">
+        <a href="api.html" class="api-link">Full API Reference</a>
+      </div>
     </section>
 
     <section>
@@ -366,5 +451,13 @@
       <a href="https://github.com/Pomb/dino8/issues">Issues</a>
     </footer>
   </div>
+  <script>
+    function showTab(id) {
+      document.querySelectorAll('[id^="tab-"]').forEach(function(el) { el.style.display = 'none'; });
+      document.querySelectorAll('.tab').forEach(function(el) { el.classList.remove('active'); });
+      document.getElementById('tab-' + id).style.display = 'block';
+      event.target.classList.add('active');
+    }
+  </script>
 </body>
 </html>
