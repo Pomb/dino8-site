@@ -190,35 +190,6 @@
     .api-sample .c-fn { color: var(--accent); }
     .api-sample .c-num { color: var(--orange); }
 
-    .install-grid {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 0.75rem;
-    }
-
-    @media (max-width: 500px) {
-      .install-grid { grid-template-columns: 1fr; }
-    }
-
-    .install-grid .platform {
-      background: var(--bg2);
-      border: 1px solid #2a2040;
-      border-radius: 4px;
-      padding: 0.75rem;
-    }
-
-    .install-grid .platform h3 {
-      font-size: 0.8rem;
-      color: var(--yellow);
-      margin-bottom: 0.35rem;
-    }
-
-    .install-grid .platform code {
-      font-size: 0.75rem;
-      color: var(--dim);
-      word-break: break-all;
-    }
-
     footer {
       text-align: center;
       padding: 2.5rem 0 2rem;
@@ -233,38 +204,6 @@
 
     footer a:hover {
       color: var(--accent);
-    }
-
-    .tabs {
-      display: flex;
-      gap: 0;
-      margin-bottom: 0;
-    }
-
-    .tab {
-      font-family: inherit;
-      font-size: 0.8rem;
-      padding: 0.4rem 1rem;
-      background: transparent;
-      color: var(--dim);
-      border: 1px solid #2a2040;
-      border-bottom: none;
-      border-radius: 4px 4px 0 0;
-      cursor: pointer;
-      transition: background 0.15s, color 0.15s;
-    }
-
-    .tab:hover { color: var(--text); }
-
-    .tab.active {
-      background: var(--bg2);
-      color: var(--accent);
-      border-color: #2a2040;
-    }
-
-    .tabs + pre {
-      border-top-left-radius: 0;
-      margin-top: 0;
     }
 
     .api-link {
@@ -365,49 +304,12 @@
     </section>
 
     <section>
-      <h2>QUICK START</h2>
-      <div class="tabs">
-        <button class="tab active" onclick="showTab('macos')">macOS</button>
-        <button class="tab" onclick="showTab('linux')">Linux</button>
-        <button class="tab" onclick="showTab('windows')">Windows</button>
-      </div>
-<pre id="tab-macos"><span class="c-comment"># install dependencies</span>
-<span class="c-cmd">brew install</span> <span class="c-arg">sdl2 sdl2_ttf sdl2_image sdl2_mixer lua@5.4 libzip</span>
-
-<span class="c-comment"># download latest release from the link above, then:</span>
-<span class="c-cmd">make</span>
-
-<span class="c-comment"># create a new game</span>
-<span class="c-cmd">./build/dino8</span> <span class="c-arg">create</span> my-game
+      <h2>GETTING STARTED</h2>
+<pre><span class="c-comment"># create a new game</span>
+<span class="c-cmd">dino8</span> <span class="c-arg">create</span> my-game
 
 <span class="c-comment"># run it</span>
-<span class="c-cmd">./build/dino8</span> <span class="c-arg">my-game/</span></pre>
-<pre id="tab-linux" style="display:none"><span class="c-comment"># install dependencies (Ubuntu/Debian)</span>
-<span class="c-cmd">sudo apt install</span> <span class="c-arg">build-essential libsdl2-dev libsdl2-ttf-dev \
-  libsdl2-image-dev libsdl2-mixer-dev liblua5.4-dev libzip-dev</span>
-
-<span class="c-comment"># download latest release from the link above, then:</span>
-<span class="c-cmd">make</span>
-
-<span class="c-comment"># create a new game</span>
-<span class="c-cmd">./build/dino8</span> <span class="c-arg">create</span> my-game
-
-<span class="c-comment"># run it</span>
-<span class="c-cmd">./build/dino8</span> <span class="c-arg">my-game/</span></pre>
-<pre id="tab-windows" style="display:none"><span class="c-comment"># install MSYS2 from https://www.msys2.org</span>
-<span class="c-comment"># open MSYS2 MINGW64 terminal, then:</span>
-
-<span class="c-cmd">pacman -S</span> <span class="c-arg">mingw-w64-x86_64-{gcc,SDL2,SDL2_ttf,SDL2_image,\
-  SDL2_mixer,lua,libzip,pkg-config} make git</span>
-
-<span class="c-comment"># download latest release from the link above, then:</span>
-<span class="c-cmd">make</span>
-
-<span class="c-comment"># create a new game</span>
-<span class="c-cmd">./build/dino8.exe</span> <span class="c-arg">create</span> my-game
-
-<span class="c-comment"># run it</span>
-<span class="c-cmd">./build/dino8.exe</span> <span class="c-arg">my-game/</span></pre>
+<span class="c-cmd">dino8</span> <span class="c-arg">my-game/</span></pre>
     </section>
 
     <section>
@@ -442,37 +344,8 @@
 <span class="c-cmd">dino8</span> <span class="c-arg">help</span>                  <span class="c-comment"># all commands</span></pre>
     </section>
 
-    <section>
-      <h2>INSTALL DEPENDENCIES</h2>
-      <div class="install-grid">
-        <div class="platform">
-          <h3>macOS</h3>
-          <code>brew install sdl2 sdl2_ttf sdl2_image sdl2_mixer lua@5.4 libzip</code>
-        </div>
-        <div class="platform">
-          <h3>Ubuntu / Debian</h3>
-          <code>sudo apt install libsdl2-dev libsdl2-ttf-dev libsdl2-image-dev libsdl2-mixer-dev liblua5.4-dev libzip-dev</code>
-        </div>
-        <div class="platform">
-          <h3>Arch Linux</h3>
-          <code>sudo pacman -S sdl2 sdl2_ttf sdl2_image sdl2_mixer lua libzip</code>
-        </div>
-        <div class="platform">
-          <h3>Windows (MSYS2)</h3>
-          <code>pacman -S mingw-w64-x86_64-{gcc,SDL2,SDL2_ttf,SDL2_image,SDL2_mixer,lua,libzip}</code>
-        </div>
-      </div>
-    </section>
 
     <footer></footer>
   </div>
-  <script>
-    function showTab(id) {
-      document.querySelectorAll('[id^="tab-"]').forEach(function(el) { el.style.display = 'none'; });
-      document.querySelectorAll('.tab').forEach(function(el) { el.classList.remove('active'); });
-      document.getElementById('tab-' + id).style.display = 'block';
-      event.target.classList.add('active');
-    }
-  </script>
 </body>
 </html>
