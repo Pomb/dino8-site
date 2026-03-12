@@ -47,10 +47,12 @@
     }
 
     nav .back {
-      display: block;
-      color: var(--dim);
+      display: flex;
+      align-items: center;
+      color: var(--accent);
       text-decoration: none;
-      font-size: 0.8rem;
+      font-size: 0.85rem;
+      font-weight: bold;
       margin-bottom: 1rem;
       padding-bottom: 0.75rem;
       border-bottom: 1px solid #2a2040;
@@ -433,7 +435,7 @@
 <body>
   <div class="layout">
     <nav>
-      <a href="index.html" class="back">&larr; Back to Dino8</a>
+      <a href="index.html" class="back"><img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAEAAAABACAMAAACdt4HsAAAAAXNSR0IArs4c6QAAADNQTFRFAAAAFAwcRCQ0MDRtTkpOhUwwNGUk0EZIdXFhWX3O0n0shZWhbaos0qqZbcLK2tRe3u7WcKBUIgAAABF0Uk5TAP////////////////////8QFUChAAAEM0lEQVRYhaWXi5bbKgxFBwE2KxjD/39tdSTEw0nXvZmqdYwzPjtCSDx+fsTcL+xn2m/kKwJtL0bE/0nuZoR/83HaJHAjhChGUdSbQInjMdi7IXQC9E3UXxheNkL/faIvOg+E+jAc+DZ+3oMAF1jPTd/JYJPzcEcvGnf7cOoqdUIHiFiFrt+VwnenV2941xHoxQA4/UG3xuE/g8IA6oAwvryu++KrVn1srdXWzdXKbfkOTwB4BfhIXeyOatYMWUrTb0rBlVIDpxVEwQDm7DXsvjsGnlCALuacUuZmt7wAcB/aNAHyyYAyVSn/DWCEKq37vnHd19KXxVj/egCuqnIijo8A2I7jOo773kMPK1VSZvPgA+AQAHySxO+lisziDuS3IGrwAKC7m45pdfjSLEPFA5LzR0AlcwZyuTPAQxk8MoCvCAAPywNgg0DuvlbjkXAhAxDhHF8FAIIHYQHcxxCo8xPAnU0MoABACPzhSi2UJkCq7BjjeCDyk4BUqpbPBR8AVGRi2DPRBCAM465KSeCXu1UBSBfCCjgG4FGQ1JLT8qGM8BUBxLQA/ArglNJOnafeWU3ogk0lPByFvQgPwLX2moWn2OvlXMSPc0mGRggd/E0cA3oADpqBqwZALVF1DIgozcJpEBE5Luny7MIxCVbLVWoxM4BXESlupIMA6gPgARhyZJ/JEYGM/LUZiqdyFFMH+AEYIbx1+Pow8ISGzKFUI69Jsmq15jkW5N0O8NfDRB94FupTkohZKPmcZBmaicSAVcs9ZYBPBUMF4ySuKOWSVU8JE9JHAAIgsbpmMgVdRtcpJSGfVgD1Yubxu+oDwDmw6WVCKzV9AkBMql8B+bnCJK5GeLDNBzqMUDvPHSm2gBTz+yWmjyVuAM14Icjag0baAaW9OqC8SHuRngC+HwrQzFoBpbHQCFHj8JzSeEZh0kwhBdSKPIgqJ+kHtzU1APBLOfcRchuA81gAoue/n+oGxzFJHiyA98V8AkzFb82m++QBbM5dXwN0/mp/A9AA9Jd3gO6F3FMvACPQdECWuG1t1M1QeeplFIzwWjuwro3wBLOk9R97EVsKxAMXH3rdsG0AGYeoIhuFaoA48mh24VHOWrHJANh/NiHkoR9dOaUZJgD5QAFRSCoagA/DePYmtgorQIblDVC1Fs6XrhBrHnjaPfgQg1qwS0uLB9ibnqD1Udi6IOtWkOiXYqlc6wpgvcRSALwmTEDwlsYYvLE1lQ0mAPKr5xgEAcihYdvmOSwzue8vu7oD3ARgwSMr3T2RtBz598dmdwJcX2vVpPt8JohjRrJcDrOKefyyfvbeTXnf668AJQj2/xu1AZC6JOf2CWm++f4liV7WNzl0ySnvq0OXnJj8ADg7J4ZheMJRcDknPi10fSe8H071NbnTu5y0v/Po+wmxHl5NtcndPx6+l+P7bxBd+QchalfP7EvSBQAAAABJRU5ErkJggg==" alt="dino8" style="image-rendering: pixelated; width: 32px; height: 32px; vertical-align: middle; margin-right: 6px;">Dino8</a>
       <div class="search-box">
         <input type="text" id="search" placeholder="Search API..." autocomplete="off" spellcheck="false">
         <div class="search-hint" id="search-hint"></div>
@@ -481,7 +483,7 @@
 
     <main>
       <header>
-        <h1>DINO8 API REFERENCE</h1>
+        <h1>API REFERENCE</h1>
         <p>Complete Lua API for the Dino8 game engine.</p>
       </header>
 
