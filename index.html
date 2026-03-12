@@ -120,6 +120,133 @@
       opacity: 0.7;
     }
 
+    .code-btn {
+      display: inline-block;
+      padding: 0.5rem 1.25rem;
+      font-family: inherit;
+      font-size: 0.85rem;
+      border: 2px solid var(--blue);
+      border-radius: 4px;
+      background: transparent;
+      color: var(--blue);
+      cursor: pointer;
+      text-decoration: none;
+      flex: 1;
+      text-align: center;
+      transition: background 0.15s, color 0.15s;
+    }
+
+    .code-btn:hover {
+      background: var(--blue);
+      color: var(--bg);
+    }
+
+    .early-access {
+      display: none;
+      background: var(--bg2);
+      border: 1px solid #2a2040;
+      border-radius: 4px;
+      padding: 1.25rem;
+      margin: 0 0 2rem;
+      text-align: center;
+    }
+
+    .early-access.active {
+      display: block;
+    }
+
+    .early-access p {
+      color: var(--dim);
+      font-size: 0.8rem;
+      margin-bottom: 0.75rem;
+    }
+
+    .download-links {
+      display: flex;
+      gap: 0.5rem;
+      flex-wrap: wrap;
+      justify-content: center;
+      margin-top: 0.75rem;
+    }
+
+    .download-links a {
+      display: inline-block;
+      padding: 0.4rem 1rem;
+      font-family: inherit;
+      font-size: 0.8rem;
+      text-decoration: none;
+      border: 2px solid var(--green);
+      color: var(--green);
+      border-radius: 4px;
+      cursor: pointer;
+      transition: background 0.15s, color 0.15s;
+    }
+
+    .download-links a:hover {
+      background: var(--green);
+      color: var(--bg);
+    }
+
+    .code-form {
+      display: flex;
+      gap: 0.5rem;
+      max-width: 280px;
+      margin: 0 auto;
+    }
+
+    .code-form input {
+      flex: 1;
+      padding: 0.5rem 0.75rem;
+      font-family: inherit;
+      font-size: 1rem;
+      background: var(--bg);
+      border: 2px solid #4E4A4E;
+      border-radius: 4px;
+      color: var(--text);
+      text-align: center;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      outline: none;
+    }
+
+    .code-form input:focus {
+      border-color: var(--blue);
+    }
+
+    .code-form input.error {
+      border-color: var(--red);
+    }
+
+    .code-form input.success {
+      border-color: var(--green);
+    }
+
+    .code-form button {
+      padding: 0.5rem 1rem;
+      font-family: inherit;
+      font-size: 0.85rem;
+      background: var(--blue);
+      border: 2px solid var(--blue);
+      border-radius: 4px;
+      color: var(--bg);
+      cursor: pointer;
+      transition: background 0.15s;
+    }
+
+    .code-form button:hover {
+      background: var(--accent);
+      border-color: var(--accent);
+    }
+
+    .code-msg {
+      margin-top: 0.5rem;
+      font-size: 0.8rem;
+      min-height: 1.2em;
+    }
+
+    .code-msg.error { color: var(--red); }
+    .code-msg.success { color: var(--green); }
+
     section {
       margin: 2.5rem 0;
     }
@@ -265,7 +392,18 @@
 
     <div class="download-bar">
       <span class="buy-btn">Buy <span class="coming-soon">(coming soon)</span></span>
+      <span class="code-btn" onclick="toggleEarlyAccess()">I have a code</span>
       <a href="api.html" class="api-link">Full API Reference</a>
+    </div>
+
+    <div class="early-access" id="earlyAccess">
+      <p>Enter your early-access code to download.</p>
+      <div class="code-form" id="codeForm">
+        <input type="text" id="codeInput" maxlength="4" placeholder="CODE" autocomplete="off" spellcheck="false">
+        <button id="codeBtn" onclick="submitCode()">Rawr!</button>
+      </div>
+      <div class="code-msg" id="codeMsg"></div>
+      <div class="download-links" id="downloadLinks" style="display:none"></div>
     </div>
 
     <section>
@@ -347,5 +485,131 @@
 
     <footer></footer>
   </div>
+
+  <script>
+    const WORKER_URL = 'https://dino8-codes.pmlomb.workers.dev';
+
+    function toggleEarlyAccess() {
+      const el = document.getElementById('earlyAccess');
+      el.classList.toggle('active');
+      if (el.classList.contains('active')) {
+        document.getElementById('codeInput').focus();
+      }
+    }
+
+    const PLATFORM_LABELS = {
+      'macos-arm64': 'macOS (Apple Silicon)',
+      'macos-x64': 'macOS (Intel)',
+      'linux-x64': 'Linux (x64)',
+      'windows-x64': 'Windows (x64)',
+    };
+
+    let validatedCode = null;
+
+    async function submitCode() {
+      const input = document.getElementById('codeInput');
+      const msg = document.getElementById('codeMsg');
+      const btn = document.getElementById('codeBtn');
+      const code = input.value.trim().toUpperCase();
+
+      if (!code) {
+        input.className = 'error';
+        msg.textContent = 'Please enter a code.';
+        msg.className = 'code-msg error';
+        return;
+      }
+
+      btn.disabled = true;
+      btn.textContent = '...';
+      msg.textContent = '';
+      msg.className = 'code-msg';
+
+      try {
+        const res = await fetch(`${WORKER_URL}/validate`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ code }),
+        });
+        const data = await res.json();
+
+        if (data.valid) {
+          validatedCode = code;
+          input.className = 'success';
+          msg.textContent = 'Choose your platform:';
+          msg.className = 'code-msg success';
+          document.getElementById('codeForm').style.display = 'none';
+          showDownloadLinks(data.platforms);
+        } else {
+          input.className = 'error';
+          msg.textContent = data.error || 'Invalid code.';
+          msg.className = 'code-msg error';
+        }
+      } catch {
+        input.className = 'error';
+        msg.textContent = 'Could not reach server. Try again.';
+        msg.className = 'code-msg error';
+      } finally {
+        btn.disabled = false;
+        btn.textContent = 'Rawr!';
+      }
+    }
+
+    function showDownloadLinks(platforms) {
+      const container = document.getElementById('downloadLinks');
+      container.innerHTML = '';
+      platforms.forEach(p => {
+        const a = document.createElement('a');
+        a.textContent = PLATFORM_LABELS[p] || p;
+        a.href = '#';
+        a.onclick = (e) => { e.preventDefault(); downloadBuild(p); };
+        container.appendChild(a);
+      });
+      container.style.display = 'flex';
+    }
+
+    async function downloadBuild(platform) {
+      const msg = document.getElementById('codeMsg');
+      msg.textContent = 'Starting download...';
+
+      try {
+        const res = await fetch(`${WORKER_URL}/download`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ code: validatedCode, platform }),
+        });
+
+        if (!res.ok) {
+          const err = await res.json();
+          msg.textContent = err.error || 'Download failed.';
+          msg.className = 'code-msg error';
+          return;
+        }
+
+        const blob = await res.blob();
+        const disposition = res.headers.get('Content-Disposition') || '';
+        const match = disposition.match(/filename="(.+)"/);
+        const filename = match ? match[1] : `dino8-${platform}.zip`;
+
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = filename;
+        document.body.appendChild(a);
+        a.click();
+        a.remove();
+        URL.revokeObjectURL(url);
+
+        msg.textContent = 'Download started!';
+        msg.className = 'code-msg success';
+      } catch {
+        msg.textContent = 'Download failed. Try again.';
+        msg.className = 'code-msg error';
+      }
+    }
+
+    document.getElementById('codeInput').addEventListener('keydown', function(e) {
+      if (e.key === 'Enter') submitCode();
+    });
+  </script>
 </body>
 </html>
