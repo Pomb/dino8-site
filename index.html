@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Dino8 - Retro Game Toolkit</title>
+  <title>Dino8 - Retro Game SDK</title>
   <link rel="icon" href="favicon.ico" type="image/x-icon">
   <style>
     :root {
@@ -100,25 +100,25 @@
       border-color: var(--accent);
     }
 
-    .buy-btn {
+    .notify-btn {
       display: inline-block;
       padding: 0.5rem 1.25rem;
       font-family: inherit;
       font-size: 0.85rem;
       border: 2px solid var(--green);
       border-radius: 4px;
-      background: var(--green);
-      color: var(--bg);
-      cursor: default;
+      background: transparent;
+      color: var(--green);
+      cursor: pointer;
       text-decoration: none;
       flex: 1;
       text-align: center;
+      transition: background 0.15s, color 0.15s;
     }
 
-    .coming-soon {
-      font-size: 0.65rem;
+    .notify-btn:hover {
+      background: var(--green);
       color: var(--bg);
-      opacity: 0.7;
     }
 
     .code-btn {
@@ -142,7 +142,7 @@
       color: var(--bg);
     }
 
-    .early-access {
+    .expandable-panel {
       display: none;
       background: var(--bg2);
       border: 1px solid #2a2040;
@@ -152,15 +152,68 @@
       text-align: center;
     }
 
-    .early-access.active {
+    .expandable-panel.active {
       display: block;
     }
 
-    .early-access p {
+    .expandable-panel p {
       color: var(--dim);
       font-size: 0.8rem;
       margin-bottom: 0.75rem;
     }
+
+    .signup-form {
+      display: flex;
+      gap: 0.5rem;
+      max-width: 320px;
+      margin: 0 auto;
+    }
+
+    .signup-form input {
+      flex: 1;
+      padding: 0.5rem 0.75rem;
+      font-family: inherit;
+      font-size: 0.85rem;
+      background: var(--bg);
+      border: 2px solid #4E4A4E;
+      border-radius: 4px;
+      color: var(--text);
+      outline: none;
+    }
+
+    .signup-form input:focus {
+      border-color: var(--green);
+    }
+
+    .signup-form input::placeholder {
+      color: #4E4A4E;
+    }
+
+    .signup-form button {
+      padding: 0.5rem 1rem;
+      font-family: inherit;
+      font-size: 0.85rem;
+      background: var(--green);
+      border: 2px solid var(--green);
+      border-radius: 4px;
+      color: var(--bg);
+      cursor: pointer;
+      transition: background 0.15s, border-color 0.15s;
+    }
+
+    .signup-form button:hover {
+      background: var(--accent);
+      border-color: var(--accent);
+    }
+
+    .signup-msg {
+      margin-top: 0.5rem;
+      font-size: 0.8rem;
+      min-height: 1.2em;
+    }
+
+    .signup-msg.error { color: var(--red); }
+    .signup-msg.success { color: var(--green); }
 
     .download-links {
       display: flex;
@@ -371,9 +424,9 @@
       font-family: inherit;
       font-size: 0.7rem;
       background: transparent;
-      border: 1px solid var(--dim);
+      border: 1px solid #2a2040;
       border-radius: 3px;
-      color: var(--dim);
+      color: #2a2040;
       cursor: pointer;
       transition: border-color 0.15s, color 0.15s;
       letter-spacing: 0.05em;
@@ -468,13 +521,15 @@
 
     .api-link {
       display: inline-block;
-      padding: 0.4rem 1.1rem;
+      padding: 0.5rem 1.25rem;
       font-family: inherit;
       font-size: 0.85rem;
       text-decoration: none;
       border: 2px solid var(--accent);
       color: var(--accent);
       border-radius: 4px;
+      flex: 1;
+      text-align: center;
       transition: background 0.15s, color 0.15s;
     }
 
@@ -501,7 +556,7 @@
 <body>
   <div class="container">
     <header>
-      <img src="data:image/png;base64,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" alt="dino8" style="image-rendering: pixelated; width: 256px; height: auto;">
+      <img src="data:image/png;base64,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" alt="dino8" style="image-rendering: pixelated; width: 256px; height: auto;">
       <br>
       <span class="version" id="versionBadge">...</span>
     </header>
@@ -526,12 +581,21 @@
     </div>
 
     <div class="download-bar">
-      <span class="buy-btn">Buy <span class="coming-soon">(coming soon)</span></span>
-      <span class="code-btn" onclick="toggleEarlyAccess()">I have a code</span>
+      <span class="notify-btn" onclick="togglePanel('signupPanel')">Notify me</span>
+      <span class="code-btn" onclick="togglePanel('earlyAccess')">I have a code</span>
       <a href="api.html" class="api-link">Full API Reference</a>
     </div>
 
-    <div class="early-access" id="earlyAccess">
+    <div class="expandable-panel" id="signupPanel">
+      <p>Get notified when Dino8 launches.</p>
+      <div class="signup-form" id="signupForm">
+        <input type="email" id="signupEmail" placeholder="your@email.com" autocomplete="email" spellcheck="false">
+        <button id="signupBtn" onclick="submitSignup()">Rawr!</button>
+      </div>
+      <div class="signup-msg" id="signupMsg"></div>
+    </div>
+
+    <div class="expandable-panel" id="earlyAccess">
       <p>Enter your early-access code to download.</p>
       <div class="code-form" id="codeForm">
         <input type="text" id="codeInput" maxlength="4" placeholder="CODE" autocomplete="off" spellcheck="false">
@@ -542,7 +606,7 @@
     </div>
 
     <section>
-      <p>Dino8 is a 2d retro game toolkit for developers who want PICO-8&rsquo;s simplicity but without the limits. Write Lua, use your favorite tools, and ship to web, desktop, and mobile from one CLI.</p>
+      <p>Dino8 is a 2d retro game SDK for developers who want PICO-8&rsquo;s simplicity but without the limits. Write Lua, use your favorite tools, and ship to web, desktop, and mobile from one CLI.</p>
       <p>No token limits, no restricted memory, no forced resolution. Bring your own tools and focus on making the game.</p>
     </section>
 
@@ -586,11 +650,16 @@
     </section>
 
     <section>
-      <h2>API SAMPLE</h2>
-<pre class="api-sample"><span class="c-kw">function</span> <span class="c-fn">_init</span>()
+      <div class="cli-header">
+        <h2>API SAMPLE</h2>
+        <button class="cli-toggle" onclick="copyApiSample(this)">copy</button>
+      </div>
+<pre class="api-sample"><span class="c-comment">-- called once at startup</span>
+<span class="c-kw">function</span> <span class="c-fn">_init</span>()
   x, y = <span class="c-num">64</span>, <span class="c-num">64</span>
 <span class="c-kw">end</span>
 
+<span class="c-comment">-- called every frame for game logic (60fps)</span>
 <span class="c-kw">function</span> <span class="c-fn">_update</span>()
   <span class="c-kw">if</span> <span class="c-fn">btn</span>(<span class="c-num">0</span>) <span class="c-kw">then</span> x = x - <span class="c-num">1</span> <span class="c-kw">end</span>
   <span class="c-kw">if</span> <span class="c-fn">btn</span>(<span class="c-num">1</span>) <span class="c-kw">then</span> x = x + <span class="c-num">1</span> <span class="c-kw">end</span>
@@ -598,9 +667,14 @@
   <span class="c-kw">if</span> <span class="c-fn">btn</span>(<span class="c-num">3</span>) <span class="c-kw">then</span> y = y + <span class="c-num">1</span> <span class="c-kw">end</span>
 <span class="c-kw">end</span>
 
+<span class="c-comment">-- called every frame to render the game world</span>
 <span class="c-kw">function</span> <span class="c-fn">_draw</span>()
   <span class="c-fn">cls</span>()
   <span class="c-fn">circ</span>(x, y, <span class="c-num">4</span>, <span class="c-num">7</span>)
+<span class="c-kw">end</span>
+
+<span class="c-comment">-- called every frame for UI (not affected by camera)</span>
+<span class="c-kw">function</span> <span class="c-fn">_ui</span>()
   <span class="c-fn">print</span>(<span class="c-str">"hello dino8"</span>, <span class="c-num">40</span>, <span class="c-num">10</span>, <span class="c-num">14</span>)
 <span class="c-kw">end</span></pre>
     </section>
@@ -697,6 +771,14 @@
   </div>
 
   <script>
+    function copyApiSample(btn) {
+      var text = btn.closest('section').querySelector('pre').textContent;
+      navigator.clipboard.writeText(text).then(function() {
+        btn.textContent = 'copied';
+        setTimeout(function() { btn.textContent = 'copy'; }, 1500);
+      });
+    }
+
     function toggleCliView() {
       const compact = document.getElementById('cliCompact');
       const expanded = document.getElementById('cliExpanded');
@@ -709,11 +791,60 @@
 
     const WORKER_URL = 'https://dino8.pmlomb.workers.dev';
 
-    function toggleEarlyAccess() {
-      const el = document.getElementById('earlyAccess');
+    async function submitSignup() {
+      const input = document.getElementById('signupEmail');
+      const msg = document.getElementById('signupMsg');
+      const btn = document.getElementById('signupBtn');
+      const email = input.value.trim();
+
+      if (!email || !email.includes('@') || !email.includes('.')) {
+        msg.textContent = 'Please enter a valid email.';
+        msg.className = 'signup-msg error';
+        return;
+      }
+
+      btn.disabled = true;
+      btn.textContent = '...';
+      msg.textContent = '';
+      msg.className = 'signup-msg';
+
+      try {
+        const res = await fetch(`${WORKER_URL}/signup`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ email }),
+        });
+        const data = await res.json();
+
+        if (res.ok) {
+          document.getElementById('signupForm').style.display = 'none';
+          msg.textContent = "You're on the list! We'll email you when Dino8 launches.";
+          msg.className = 'signup-msg success';
+        } else {
+          msg.textContent = data.error || 'Something went wrong. Try again.';
+          msg.className = 'signup-msg error';
+        }
+      } catch {
+        msg.textContent = 'Could not reach server. Try again.';
+        msg.className = 'signup-msg error';
+      } finally {
+        btn.disabled = false;
+        btn.textContent = 'Notify me';
+      }
+    }
+
+    document.getElementById('signupEmail').addEventListener('keydown', function(e) {
+      if (e.key === 'Enter') submitSignup();
+    });
+
+    function togglePanel(id) {
+      const panels = document.querySelectorAll('.expandable-panel');
+      panels.forEach(p => { if (p.id !== id) p.classList.remove('active'); });
+      const el = document.getElementById(id);
       el.classList.toggle('active');
       if (el.classList.contains('active')) {
-        document.getElementById('codeInput').focus();
+        const input = el.querySelector('input');
+        if (input) input.focus();
       }
     }
 
@@ -799,7 +930,6 @@
       const linksEl = document.getElementById('downloadLinks');
       const earlyAccess = document.getElementById('earlyAccess');
 
-      // Hide platform links and show progress bar
       linksEl.style.display = 'none';
       msg.textContent = '';
       msg.className = 'code-msg';
@@ -860,7 +990,6 @@
           const blob = new Blob(chunks);
           triggerDownload(blob, filename);
         } else {
-          // Fallback: no content-length, simulate progress
           fill.style.transition = 'width 2s ease';
           fill.style.width = '80%';
           const blob = await res.blob();
@@ -872,7 +1001,6 @@
         progressText.textContent = 'Complete!';
         fill.style.width = '100%';
 
-        // After a brief moment, show post-download message
         setTimeout(() => {
           progressEl.style.display = 'none';
           showPostDownload(platform, filename);
@@ -914,7 +1042,7 @@
         extractCmd = `<span class="c-comment"># extract and add to PATH</span>\n<span class="c-comment"># unzip ${filename} to a folder, e.g. C:\\dino8</span>\n<span class="c-comment"># then add that folder to your system PATH</span>`;
         aliasHint = 'Add the folder containing <code>dino8.exe</code> to your system PATH so you can run it from any terminal.';
       } else {
-        const dir = platform.startsWith('macos') ? '~/dino8' : '~/dino8';
+        const dir = '~/dino8';
         const unzipCmd = ext === 'tar.gz'
           ? `<span class="c-cmd">tar</span> <span class="c-arg">xzf</span> ${filename} <span class="c-arg">-C</span> ${dir}`
           : `<span class="c-cmd">unzip</span> ${filename} <span class="c-arg">-d</span> ${dir}`;

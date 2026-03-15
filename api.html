@@ -20,6 +20,13 @@
       --brown: #854C30;
     }
 
+    @font-face {
+      font-family: 'Dino8';
+      src: url('dino8.ttf') format('truetype');
+      font-weight: normal;
+      font-style: normal;
+    }
+
     * { margin: 0; padding: 0; box-sizing: border-box; }
 
     body {
@@ -249,6 +256,63 @@
       width: 56%;
     }
 
+    .dino8-glyph {
+      font-family: 'Dino8', monospace;
+      font-size: 1.4rem;
+      color: var(--accent);
+      text-align: center;
+    }
+
+    .section table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 0.8rem;
+      margin-bottom: 1rem;
+    }
+
+    .section table th,
+    .section table td {
+      padding: 0.35rem 0.6rem;
+      text-align: left;
+      border-bottom: 1px solid #2a2040;
+    }
+
+    .section table th {
+      color: var(--dim);
+      font-size: 0.7rem;
+      letter-spacing: 0.05em;
+    }
+
+    .glyph-table { table-layout: fixed; }
+    .glyph-table .dino8-glyph { width: 40px; }
+
+    .section h3 {
+      font-size: 0.85rem;
+      color: var(--accent);
+      margin: 1.25rem 0 0.5rem;
+    }
+
+    .section pre {
+      background: var(--bg2);
+      border: 1px solid #2a2040;
+      border-radius: 4px;
+      padding: 0.75rem 1rem;
+      overflow-x: auto;
+      font-size: 0.8rem;
+      line-height: 1.5;
+      margin-bottom: 1rem;
+    }
+
+    .section pre code {
+      color: var(--text);
+    }
+
+    .section p {
+      color: var(--dim);
+      font-size: 0.8rem;
+      margin-bottom: 0.75rem;
+    }
+
     .conf-subsection {
       font-size: 0.85rem;
       color: var(--accent);
@@ -450,6 +514,7 @@
       <a href="#drawing">Drawing</a>
       <a href="#palette">Palette</a>
       <a href="#text">Text</a>
+      <a href="#font">Font</a>
       <a href="#sprites">Sprites</a>
       <a href="#camera">Camera</a>
       <a href="#clipping">Clipping</a>
@@ -493,7 +558,7 @@
     <main>
       <header>
         <h1>API REFERENCE</h1>
-        <p>Complete Lua API for the Dino8 retro game toolkit.</p>
+        <p>Complete Lua API for the Dino8 retro game SDK.</p>
       </header>
 
       <!-- GLOBALS -->
@@ -516,6 +581,10 @@
           <div class="global-desc">.UP .DOWN .LEFT .RIGHT .ACTION_A .ACTION_B .ESCAPE &mdash; context-aware input icons</div>
         </div>
         <div class="global">
+          <span class="global-name">GLYPH</span> <span class="global-type">table</span>
+          <div class="global-desc">.ARROW_LEFT .ARROW_UP .ARROW_RIGHT .ARROW_DOWN .HEART .STAR .CHECK .CROSS .NOTE .NOTES .SPADE .CLUB .DIAMOND .TRI_UP .TRI_RIGHT .TRI_DOWN .TRI_LEFT .SQUARE .CIRCLE .BLOCK .PAUSE &mdash; symbol glyphs</div>
+        </div>
+        <div class="global">
           <span class="global-name">CONFIG</span> <span class="global-type">table</span>
           <div class="global-desc">Read-only table of all conf.lua values: .title, .version, .width, .height, .author, .assets, etc.</div>
         </div>
@@ -524,7 +593,7 @@
       <!-- CALLBACKS -->
       <div class="section" id="callbacks">
         <h2>CALLBACKS</h2>
-        <div class="note">Define these functions in your game. The engine calls them automatically.</div>
+        <div class="note">Define these functions in your game. The engine calls them automatically. Drawing is split into two passes: <code>_draw</code> runs in world space (affected by camera), while <code>_ui</code> runs in screen space (ignores camera). Use <code>_draw</code> for gameplay and <code>_ui</code> for HUD, menus, and overlays that should stay fixed on screen.</div>
         <div class="fn">
           <div class="fn-sig"><span class="fn-name">_init</span>()</div>
           <div class="fn-desc">Called once at startup for initialization</div>
@@ -534,12 +603,12 @@
           <div class="fn-desc">Called every frame to update game logic</div>
         </div>
         <div class="fn">
-          <div class="fn-sig"><span class="fn-name">_render</span>()</div>
-          <div class="fn-desc">Called every frame to render world graphics (affected by camera)</div>
+          <div class="fn-sig"><span class="fn-name">_draw</span>()</div>
+          <div class="fn-desc">Called every frame to render in world space (affected by camera position, scale, rotation)</div>
         </div>
         <div class="fn">
           <div class="fn-sig"><span class="fn-name">_ui</span>()</div>
-          <div class="fn-desc">Called every frame to render UI (NOT affected by camera)</div>
+          <div class="fn-desc">Called every frame after _draw to render in screen space (ignores camera &mdash; stays fixed on screen)</div>
         </div>
         <div class="fn">
           <div class="fn-sig"><span class="fn-name">_orientation_changed</span>(<span class="fn-param">orientation</span>)</div>
@@ -565,7 +634,7 @@
           <tr><td>title</td><td>"dino8"</td><td>Game title, shown in window title bar and used for save data.</td></tr>
           <tr><td>author</td><td>"Unknown"</td><td>Creator name.</td></tr>
           <tr><td>version</td><td>"0.1.0"</td><td>Semantic version string.</td></tr>
-          <tr><td>description</td><td>"A retro game toolkit"</td><td>Short project description.</td></tr>
+          <tr><td>description</td><td>"A retro game SDK"</td><td>Short project description.</td></tr>
           <tr><td>type</td><td>"game"</td><td>Project type: <code>"game"</code>, <code>"tool"</code>, or <code>"data"</code>.</td></tr>
           <tr><td>tags</td><td>nil</td><td>Array of tag strings for categorization.</td></tr>
           <tr><td>thumbnail</td><td>nil</td><td>Path to a thumbnail image file.</td></tr>
@@ -868,6 +937,7 @@
       <!-- TEXT -->
       <div class="section" id="text">
         <h2>TEXT</h2>
+        <div class="note">Print text to screen. Font style, line height, and kerning are configurable at runtime.</div>
         <div class="fn">
           <div class="fn-sig"><span class="fn-name">print</span>(<span class="fn-param">text</span>, <span class="fn-param">x</span>, <span class="fn-param">y</span>, <span class="fn-opt">[color]</span>, <span class="fn-opt">[bg_color]</span>)</div>
           <div class="fn-desc">Print text at position</div>
@@ -903,9 +973,101 @@
         </div>
       </div>
 
+      <!-- FONT -->
+      <div class="section" id="font">
+        <h2>FONT</h2>
+        <p>Dino8 includes a built-in pixel font (<code>dino8.ttf</code>) with broad multilingual coverage plus custom glyphs for input controls and symbols.</p>
+
+        <h3>Supported Character Sets</h3>
+
+        <h3>Basic Latin + Western European</h3>
+        <p>Full diacritic coverage for all standard ASCII characters plus accented and special letters used by English, French, German, Spanish, Italian, Portuguese, Dutch, Swedish, Norwegian, Danish, Finnish, Polish, Turkish, and other Latin-script languages.</p>
+        <table>
+          <tr><th>Language</th><th>Extra Characters</th></tr>
+          <tr><td>French</td><td class="dino8-glyph" style="font-size:1rem">&#xe9; &#xe8; &#xea; &#xeb; &#xee; &#xef; &#xf4; &#xfb; &#xf9; &#xe7; &#xe0;</td></tr>
+          <tr><td>German</td><td class="dino8-glyph" style="font-size:1rem">&#xe4; &#xf6; &#xfc; &#xdf;</td></tr>
+          <tr><td>Spanish</td><td class="dino8-glyph" style="font-size:1rem">&#xe1; &#xe9; &#xed; &#xf3; &#xfa; &#xf1; &#xbf; &#xa1;</td></tr>
+          <tr><td>Nordic</td><td class="dino8-glyph" style="font-size:1rem">&#xe5; &#xe4; &#xf6;</td></tr>
+        </table>
+
+        <h3>Japanese (Complete Syllabary)</h3>
+        <p>Full support for modern game text with all 46 Hiragana, all 46 Katakana, dakuten (voiced) and handakuten (half-voiced) forms, all small/y&#x14D;on combinations, and double-consonant support.</p>
+        <table>
+          <tr><th>Set</th><th>Coverage</th></tr>
+          <tr><td>Hiragana</td><td class="dino8-glyph" style="font-size:1rem">&#x3042;&#x3044;&#x3046;&#x3048;&#x304A; &#x304B;&#x304D;&#x304F;&#x3051;&#x3053; &#x3055;&#x3057;&#x3059;&#x305B;&#x305D; &#x305F;&#x3061;&#x3064;&#x3066;&#x3068; &#x306A;&#x306B;&#x306C;&#x306D;&#x306E; &#x306F;&#x3072;&#x3075;&#x3078;&#x307B; &#x307E;&#x307F;&#x3080;&#x3081;&#x3082; &#x3084;&#x3086;&#x3088; &#x3089;&#x308A;&#x308B;&#x308C;&#x308D; &#x308F;&#x3092;&#x3093;</td></tr>
+          <tr><td>Katakana</td><td class="dino8-glyph" style="font-size:1rem">&#x30A2;&#x30A4;&#x30A6;&#x30A8;&#x30AA; &#x30AB;&#x30AD;&#x30AF;&#x30B1;&#x30B3; &#x30B5;&#x30B7;&#x30B9;&#x30BB;&#x30BD; &#x30BF;&#x30C1;&#x30C4;&#x30C6;&#x30C8; &#x30CA;&#x30CB;&#x30CC;&#x30CD;&#x30CE; &#x30CF;&#x30D2;&#x30D5;&#x30D8;&#x30DB; &#x30DE;&#x30DF;&#x30E0;&#x30E1;&#x30E2; &#x30E4;&#x30E6;&#x30E8; &#x30E9;&#x30EA;&#x30EB;&#x30EC;&#x30ED; &#x30EF;&#x30F2;&#x30F3;&#x30FC;</td></tr>
+          <tr><td>Voiced (&#x309B;)</td><td class="dino8-glyph" style="font-size:1rem">&#x304C;&#x304E;&#x3050;&#x3052;&#x3054; &#x3056;&#x3058;&#x305A;&#x305C;&#x305E; &#x3060;&#x3062;&#x3065;&#x3067;&#x3069; &#x3070;&#x3073;&#x3076;&#x3079;&#x307C; &#x30AC;&#x30AE;&#x30B0;&#x30B2;&#x30B4; &#x30B6;&#x30B8;&#x30BA;&#x30BC;&#x30BE; &#x30C0;&#x30C2;&#x30C5;&#x30C7;&#x30C9; &#x30D0;&#x30D3;&#x30D6;&#x30D9;&#x30DC;</td></tr>
+          <tr><td>Half-voiced (&#x309A;)</td><td class="dino8-glyph" style="font-size:1rem">&#x3071;&#x3074;&#x3077;&#x307A;&#x307D; &#x30D1;&#x30D4;&#x30D7;&#x30DA;&#x30DD;</td></tr>
+          <tr><td>Small kana</td><td class="dino8-glyph" style="font-size:1rem">&#x3041;&#x3043;&#x3045;&#x3047;&#x3049; &#x3063;&#x3083;&#x3085;&#x3087;&#x308E; &#x30A1;&#x30A3;&#x30A5;&#x30A7;&#x30A9; &#x30C3;&#x30E3;&#x30E5;&#x30E7;&#x30EE;</td></tr>
+          <tr><td>Kanji</td><td class="dino8-glyph" style="font-size:1rem">&#x4E00;&#x4E09;&#x4E0A;&#x4E0B;&#x4E16; &#x4E8C;&#x4EBA;&#x5263;&#x52DD;&#x53F3; &#x571F;&#x5927;&#x59CB;&#x5C0F;&#x5DE6; &#x65E5;&#x661F;&#x6708;&#x6B7B;&#x6C34; &#x706B;&#x738B;&#x754C;&#x7D42;&#x8CA0; &#x98A8;&#x9B54;</td></tr>
+          <tr><td>Punctuation</td><td class="dino8-glyph" style="font-size:1rem">&#x3001;&#x3002;&#x300C;&#x300D;&#xFF01;&#xFF1F;</td></tr>
+        </table>
+
+        <h3>Custom Input Glyphs</h3>
+        <p>Use these escape codes in <code>print()</code> strings to show input icons inline with text. Also accessible via the <code>GLYPH</code> table.</p>
+        <table class="glyph-table">
+          <tr><th>Glyph</th><th>Name</th><th>Usage</th></tr>
+          <tr><td class="dino8-glyph" data-char="0x80"></td><td>Cursor</td><td><code>GLYPH.CURSOR</code></td></tr>
+          <tr><td class="dino8-glyph" data-char="0x81"></td><td>Left</td><td><code>GLYPH.LEFT</code></td></tr>
+          <tr><td class="dino8-glyph" data-char="0x82"></td><td>Right</td><td><code>GLYPH.RIGHT</code></td></tr>
+          <tr><td class="dino8-glyph" data-char="0x83"></td><td>Up</td><td><code>GLYPH.UP</code></td></tr>
+          <tr><td class="dino8-glyph" data-char="0x84"></td><td>Down</td><td><code>GLYPH.DOWN</code></td></tr>
+          <tr><td class="dino8-glyph" data-char="0x85"></td><td>Action A</td><td><code>GLYPH.ACTION_A</code></td></tr>
+          <tr><td class="dino8-glyph" data-char="0x86"></td><td>Action B</td><td><code>GLYPH.ACTION_B</code></td></tr>
+          <tr><td class="dino8-glyph" data-char="0x87"></td><td>Menu</td><td><code>GLYPH.MENU</code></td></tr>
+          <tr><td class="dino8-glyph" data-char="0x88"></td><td>Star</td><td><code>GLYPH.INPUT_STAR</code></td></tr>
+          <tr><td class="dino8-glyph" data-char="0x89"></td><td>Bumper L</td><td><code>GLYPH.BUMPER_L</code></td></tr>
+          <tr><td class="dino8-glyph" data-char="0x8A"></td><td>Bumper R</td><td><code>GLYPH.BUMPER_R</code></td></tr>
+        </table>
+
+        <h3>Symbol Glyphs</h3>
+        <p>Custom pixel glyphs for common game symbols. Access via the <code>GLYPH</code> global table.</p>
+        <table class="glyph-table">
+          <tr><th>Glyph</th><th>Name</th><th>Usage</th></tr>
+          <tr><td class="dino8-glyph">&#x2190;</td><td>Left arrow</td><td><code>GLYPH.ARROW_LEFT</code></td></tr>
+          <tr><td class="dino8-glyph">&#x2191;</td><td>Up arrow</td><td><code>GLYPH.ARROW_UP</code></td></tr>
+          <tr><td class="dino8-glyph">&#x2192;</td><td>Right arrow</td><td><code>GLYPH.ARROW_RIGHT</code></td></tr>
+          <tr><td class="dino8-glyph">&#x2193;</td><td>Down arrow</td><td><code>GLYPH.ARROW_DOWN</code></td></tr>
+          <tr><td class="dino8-glyph">&#x25B2;</td><td>Up triangle</td><td><code>GLYPH.TRI_UP</code></td></tr>
+          <tr><td class="dino8-glyph">&#x25B6;</td><td>Right triangle (play)</td><td><code>GLYPH.TRI_RIGHT</code></td></tr>
+          <tr><td class="dino8-glyph">&#x25BC;</td><td>Down triangle</td><td><code>GLYPH.TRI_DOWN</code></td></tr>
+          <tr><td class="dino8-glyph">&#x25C0;</td><td>Left triangle</td><td><code>GLYPH.TRI_LEFT</code></td></tr>
+          <tr><td class="dino8-glyph">&#x25B4;</td><td>Small up triangle</td><td><code>GLYPH.TRI_UP_SM</code></td></tr>
+          <tr><td class="dino8-glyph">&#x25B8;</td><td>Small right triangle</td><td><code>GLYPH.TRI_RIGHT_SM</code></td></tr>
+          <tr><td class="dino8-glyph">&#x25BE;</td><td>Small down triangle</td><td><code>GLYPH.TRI_DOWN_SM</code></td></tr>
+          <tr><td class="dino8-glyph">&#x25C2;</td><td>Small left triangle</td><td><code>GLYPH.TRI_LEFT_SM</code></td></tr>
+          <tr><td class="dino8-glyph">&#x25A0;</td><td>Filled square (stop)</td><td><code>GLYPH.SQUARE</code></td></tr>
+          <tr><td class="dino8-glyph">&#x25A1;</td><td>Outline square</td><td><code>GLYPH.SQUARE_OUTLINE</code></td></tr>
+          <tr><td class="dino8-glyph">&#x25CF;</td><td>Filled circle</td><td><code>GLYPH.CIRCLE</code></td></tr>
+          <tr><td class="dino8-glyph">&#x25CB;</td><td>Outline circle</td><td><code>GLYPH.CIRCLE_OUTLINE</code></td></tr>
+          <tr><td class="dino8-glyph">&#x2588;</td><td>Full block</td><td><code>GLYPH.BLOCK</code></td></tr>
+          <tr><td class="dino8-glyph">&#x23F8;</td><td>Pause (double bar)</td><td><code>GLYPH.PAUSE</code></td></tr>
+          <tr><td class="dino8-glyph">&#x2605;</td><td>Star</td><td><code>GLYPH.STAR</code></td></tr>
+          <tr><td class="dino8-glyph">&#x2713;</td><td>Check mark</td><td><code>GLYPH.CHECK</code></td></tr>
+          <tr><td class="dino8-glyph">&#x2717;</td><td>Ballot X</td><td><code>GLYPH.CROSS</code></td></tr>
+          <tr><td class="dino8-glyph">&#x266A;</td><td>Eighth note</td><td><code>GLYPH.NOTE</code></td></tr>
+          <tr><td class="dino8-glyph">&#x266B;</td><td>Beamed eighth notes</td><td><code>GLYPH.NOTES</code></td></tr>
+          <tr><td class="dino8-glyph">&#x2665;</td><td>Heart</td><td><code>GLYPH.HEART</code></td></tr>
+          <tr><td class="dino8-glyph">&#x2660;</td><td>Spade</td><td><code>GLYPH.SPADE</code></td></tr>
+          <tr><td class="dino8-glyph">&#x2663;</td><td>Club</td><td><code>GLYPH.CLUB</code></td></tr>
+          <tr><td class="dino8-glyph">&#x2666;</td><td>Diamond</td><td><code>GLYPH.DIAMOND</code></td></tr>
+        </table>
+
+        <h3>Example</h3>
+        <pre><code>-- Input glyphs via GLYPH table
+print(GLYPH.UP .. GLYPH.DOWN .. GLYPH.LEFT .. GLYPH.RIGHT .. " TO MOVE", 4, 10, 7)
+print(GLYPH.ACTION_A .. " JUMP  " .. GLYPH.ACTION_B .. " ATTACK", 4, 20, 7)
+
+-- Symbol glyphs via GLYPH table
+print(GLYPH.HEART .. " LIVES: 3", 4, 30, 8)
+print(GLYPH.STAR .. " SCORE: 1000", 4, 40, 10)
+print(GLYPH.TRI_RIGHT .. " PLAY", 4, 50, 7)</code></pre>
+      </div>
+
       <!-- SPRITES -->
       <div class="section" id="sprites">
         <h2>SPRITES</h2>
+        <div class="note">Load and draw images. Supports full-image, atlas sub-region, scaling, flipping, outlined, and quad-mapped drawing.</div>
         <div class="fn">
           <div class="fn-sig"><span class="fn-name">load_image</span>(<span class="fn-param">filename</span>)</div>
           <div class="fn-ret">&rarr; number | nil</div>
@@ -945,6 +1107,7 @@
       <!-- CAMERA -->
       <div class="section" id="camera">
         <h2>CAMERA</h2>
+        <div class="note">Camera transforms apply to all drawing in <code>_draw</code>. Use <code>_ui</code> for elements that should ignore the camera.</div>
         <div class="fn">
           <div class="fn-sig"><span class="fn-name">cam_set</span>(<span class="fn-param">x</span>, <span class="fn-param">y</span>)</div>
           <div class="fn-desc">Set camera position</div>
@@ -999,6 +1162,7 @@
       <!-- CLIPPING -->
       <div class="section" id="clipping">
         <h2>CLIPPING</h2>
+        <div class="note">Restrict drawing to a rectangular region of the screen.</div>
         <div class="fn">
           <div class="fn-sig"><span class="fn-name">clip</span>(<span class="fn-opt">[x, y, w, h]</span>)</div>
           <div class="fn-desc">Set clipping rectangle. No args resets to full screen.</div>
@@ -1044,6 +1208,7 @@
       <!-- SNAPSHOT -->
       <div class="section" id="snapshot">
         <h2>SNAPSHOT</h2>
+        <div class="note">Capture the current screen to a buffer for later redrawing. Useful for transitions and effects.</div>
         <div class="fn">
           <div class="fn-sig"><span class="fn-name">snap</span>()</div>
           <div class="fn-desc">Capture current screen to snapshot buffer</div>
@@ -1085,6 +1250,7 @@
       <!-- KEYBOARD & BUTTONS -->
       <div class="section" id="keyboard">
         <h2>KEYBOARD &amp; BUTTONS</h2>
+        <div class="note">Check button and key state. <code>btn</code>/<code>btnp</code> use remappable bindings; <code>key</code>/<code>keyp</code> read physical keys directly.</div>
         <div class="fn">
           <div class="fn-sig"><span class="fn-name">btn</span>(<span class="fn-param">input</span>)</div>
           <div class="fn-ret">&rarr; boolean</div>
@@ -1129,6 +1295,7 @@
       <!-- MOUSE -->
       <div class="section" id="mouse">
         <h2>MOUSE</h2>
+        <div class="note">Mouse position and button state in screen coordinates.</div>
         <div class="fn">
           <div class="fn-sig"><span class="fn-name">mouse_x</span>() / <span class="fn-name">mouse_y</span>()</div>
           <div class="fn-ret">&rarr; number</div>
@@ -1167,6 +1334,7 @@
       <!-- GAMEPAD -->
       <div class="section" id="gamepad">
         <h2>GAMEPAD</h2>
+        <div class="note">Gamepad detection. Use <code>btn</code>/<code>btnp</code> with player numbers for gamepad input.</div>
         <div class="fn">
           <div class="fn-sig"><span class="fn-name">gamepad_connected</span>()</div>
           <div class="fn-ret">&rarr; boolean</div>
@@ -1182,6 +1350,7 @@
       <!-- TOUCH & MOBILE -->
       <div class="section" id="touch">
         <h2>TOUCH &amp; MOBILE</h2>
+        <div class="note">Touch input, on-screen keyboard, virtual controls, and mobile layout helpers.</div>
         <div class="fn">
           <div class="fn-sig"><span class="fn-name">open_keyboard</span>() / <span class="fn-name">close_keyboard</span>()</div>
           <div class="fn-desc">Show/hide on-screen keyboard (no-op on desktop)</div>
@@ -1225,6 +1394,7 @@
       <!-- SFX -->
       <div class="section" id="sfx">
         <h2>SOUND EFFECTS</h2>
+        <div class="note">Load and play sound effects. Supports wildcards for random variations, pitch/volume randomization, and per-channel control.</div>
         <div class="fn">
           <div class="fn-sig"><span class="fn-name">load_sfx</span>(<span class="fn-param">filename</span>, <span class="fn-opt">[pitch]</span>, <span class="fn-opt">[volume]</span>)</div>
           <div class="fn-ret">&rarr; number | nil</div>
@@ -1273,6 +1443,7 @@
       <!-- MUSIC -->
       <div class="section" id="music">
         <h2>MUSIC</h2>
+        <div class="note">Background music playback with looping, volume, and fade control.</div>
         <div class="fn">
           <div class="fn-sig"><span class="fn-name">load_music</span>(<span class="fn-param">filename</span>)</div>
           <div class="fn-ret">&rarr; number | nil</div>
@@ -1343,6 +1514,7 @@
       <!-- MATH -->
       <div class="section" id="math">
         <h2>MATH</h2>
+        <div class="note">Standard math functions. Trig uses radians. PICO-8 style naming (flr, rnd, mid).</div>
         <div class="fn">
           <div class="fn-sig"><span class="fn-name">sin</span>(<span class="fn-param">angle</span>) / <span class="fn-name">cos</span>(<span class="fn-param">angle</span>)</div>
           <div class="fn-ret">&rarr; number</div>
@@ -1393,6 +1565,7 @@
       <!-- COLLISION -->
       <div class="section" id="collision">
         <h2>COLLISION</h2>
+        <div class="note">Axis-aligned bounding box (AABB) and point-in-shape tests.</div>
         <div class="fn">
           <div class="fn-sig"><span class="fn-name">collides</span>(<span class="fn-param">x1</span>, <span class="fn-param">y1</span>, <span class="fn-param">w1</span>, <span class="fn-param">h1</span>, <span class="fn-param">x2</span>, <span class="fn-param">y2</span>, <span class="fn-param">w2</span>, <span class="fn-param">h2</span>)</div>
           <div class="fn-ret">&rarr; boolean</div>
@@ -1418,6 +1591,7 @@
       <!-- UTILITIES -->
       <div class="section" id="utilities">
         <h2>UTILITIES</h2>
+        <div class="note">Common helpers for interpolation, clamping, and movement.</div>
         <div class="fn">
           <div class="fn-sig"><span class="fn-name">lerp</span>(<span class="fn-param">a</span>, <span class="fn-param">b</span>, <span class="fn-param">t</span>)</div>
           <div class="fn-ret">&rarr; number</div>
@@ -1489,6 +1663,7 @@
       <!-- FILE I/O -->
       <div class="section" id="file-io">
         <h2>FILE I/O</h2>
+        <div class="note">Read, write, and manage files relative to the project directory. Native builds only.</div>
         <div class="fn">
           <div class="fn-sig"><span class="fn-name">read_file</span>(<span class="fn-param">filename</span>)</div>
           <div class="fn-ret">&rarr; string | nil</div>
@@ -1544,6 +1719,7 @@
       <!-- LEVELS -->
       <div class="section section-with-example" id="levels">
         <h2>LEVELS &amp; TILEMAPS</h2>
+        <div class="note">Create and draw tile-based levels. Up to 16 levels, each with its own tileset and grid size.</div>
         <div class="section-split">
           <div class="section-docs">
         <div class="fn">
@@ -1596,7 +1772,7 @@
 })
 
 <span class="c-comment">-- draw visible region</span>
-<span class="c-kw">function</span> <span class="c-fn">_render</span>()
+<span class="c-kw">function</span> <span class="c-fn">_draw</span>()
   <span class="c-fn">draw_level</span>(lvl,
     <span class="c-num">0</span>,<span class="c-num">0</span>,  <span class="c-comment">-- cell origin</span>
     <span class="c-num">0</span>,<span class="c-num">0</span>,  <span class="c-comment">-- screen pos</span>
@@ -1616,6 +1792,7 @@
       <!-- WINDOW -->
       <div class="section" id="window">
         <h2>WINDOW</h2>
+        <div class="note">Screen dimensions and window control.</div>
         <div class="fn">
           <div class="fn-sig"><span class="fn-name">screen_size</span>()</div>
           <div class="fn-ret">&rarr; width, height</div>
@@ -1634,6 +1811,7 @@
       <!-- TIME -->
       <div class="section" id="time">
         <h2>TIME</h2>
+        <div class="note">Timing and frame rate. See also the <code>T</code> and <code>DT</code> globals.</div>
         <div class="fn">
           <div class="fn-sig"><span class="fn-name">time</span>()</div>
           <div class="fn-ret">&rarr; string</div>
@@ -1654,6 +1832,7 @@
       <!-- PLATFORM -->
       <div class="section" id="platform">
         <h2>PLATFORM</h2>
+        <div class="note">Application lifecycle control.</div>
         <div class="fn">
           <div class="fn-sig"><span class="fn-name">quit</span>()</div>
           <div class="fn-desc">Exit the application (native only, no-op on web)</div>
@@ -1667,6 +1846,7 @@
       <!-- GIF -->
       <div class="section" id="gif">
         <h2>GIF CAPTURE</h2>
+        <div class="note">Record gameplay as animated GIFs. Also available via F9 hotkey.</div>
         <div class="fn">
           <div class="fn-sig"><span class="fn-name">gif_start</span>(<span class="fn-opt">[duration]</span>)</div>
           <div class="fn-ret">&rarr; boolean</div>
@@ -1692,6 +1872,7 @@
       <!-- SCREENSHOT -->
       <div class="section" id="screenshot">
         <h2>SCREENSHOT</h2>
+        <div class="note">Save the current screen as a PNG image.</div>
         <div class="fn">
           <div class="fn-sig"><span class="fn-name">screenshot</span>(<span class="fn-opt">[filename]</span>)</div>
           <div class="fn-ret">&rarr; boolean</div>
@@ -1702,6 +1883,7 @@
       <!-- NOTIFICATIONS -->
       <div class="section" id="notifications">
         <h2>NOTIFICATIONS</h2>
+        <div class="note">Show brief slide-up messages to the player.</div>
         <div class="fn">
           <div class="fn-sig"><span class="fn-name">notify</span>(<span class="fn-param">message</span>, <span class="fn-opt">[options]</span>)</div>
           <div class="fn-desc">Show slide-up notification. options: {value, col, vcol, bg}</div>
@@ -1737,6 +1919,7 @@
       <!-- CONSOLE & LOADING -->
       <div class="section" id="console">
         <h2>CONSOLE &amp; LOADING</h2>
+        <div class="note">Debug logging and loading screen control.</div>
         <div class="fn">
           <div class="fn-sig"><span class="fn-name">log</span>(<span class="fn-param">message</span>)</div>
           <div class="fn-desc">Log message to console (not screen)</div>
@@ -1803,6 +1986,7 @@
       <!-- JSON -->
       <div class="section" id="json">
         <h2>JSON</h2>
+        <div class="note">Encode and decode JSON strings. Tables, strings, numbers, and booleans are supported.</div>
         <div class="fn">
           <div class="fn-sig"><span class="fn-name">json_decode</span>(<span class="fn-param">json_string</span>)</div>
           <div class="fn-ret">&rarr; any</div>
@@ -1943,6 +2127,13 @@
         }
       });
     })();
+  </script>
+  <script>
+    // Inject C1 control-range characters (0x80-0x88) via JS since browsers
+    // strip HTML entities in the C1 range. data-char holds the codepoint.
+    document.querySelectorAll('[data-char]').forEach(function(el) {
+      el.textContent = String.fromCharCode(parseInt(el.dataset.char, 16));
+    });
   </script>
 </body>
 </html>

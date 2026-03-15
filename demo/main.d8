@@ -17,7 +17,7 @@ function _update()
 end
 
 -- World rendering (affected by camera)
-function _render()
+function _draw()
 	cls(0)
 	-- Draw world objects here
 	circf(64, 64, 10, 11)
