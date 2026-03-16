@@ -525,6 +525,10 @@
       <a href="#render-targets">Render Targets</a>
       <a href="#snapshot">Snapshot</a>
       <a href="#filters">Filters</a>
+      <a href="#shaders">Shaders</a>
+      <a href="#polygon">Polygon</a>
+      <a href="#bezier">Bezier Curves</a>
+      <a href="#mask">Mask</a>
       <h3>INPUT</h3>
       <a href="#keyboard">Keyboard &amp; Buttons</a>
       <a href="#mouse">Mouse</a>
@@ -543,6 +547,7 @@
       <a href="#file-io">File I/O</a>
       <h3>WORLD</h3>
       <a href="#levels">Levels &amp; Tilemaps</a>
+      <a href="#physics">Physics</a>
       <h3>SYSTEM</h3>
       <a href="#window">Window</a>
       <a href="#time">Time</a>
@@ -1260,6 +1265,97 @@ print(GLYPH.TRI_RIGHT .. " PLAY", 4, 50, 7)</code></pre>
         </div>
       </div>
 
+      <!-- CUSTOM SHADERS -->
+      <div class="section" id="shaders">
+        <h2>CUSTOM SHADERS</h2>
+        <div class="note">Load and apply custom GLSL fragment shaders. Up to 8 shader slots. Auto-set uniforms: u_texture, u_resolution, u_time, u_mouse, u_game_resolution.</div>
+        <div class="fn">
+          <div class="fn-sig"><span class="fn-name">shader_load</span>(<span class="fn-param">name</span>, <span class="fn-param">source</span>)</div>
+          <div class="fn-ret">&rarr; integer</div>
+          <div class="fn-desc">Load shader from GLSL source or file path (if contains "/" or ends ".glsl"). Returns handle (1-8).</div>
+        </div>
+        <div class="fn">
+          <div class="fn-sig"><span class="fn-name">shader_enable</span>(<span class="fn-param">handle</span>) / <span class="fn-name">shader_disable</span>(<span class="fn-param">handle</span>)</div>
+          <div class="fn-desc">Enable or disable a shader by handle</div>
+        </div>
+        <div class="fn">
+          <div class="fn-sig"><span class="fn-name">shader_set</span>(<span class="fn-param">handle</span>, <span class="fn-param">name</span>, <span class="fn-param">v1</span>, <span class="fn-opt">[v2, v3, v4]</span>)</div>
+          <div class="fn-desc">Set a uniform on a shader. Supports float, vec2, vec3, vec4.</div>
+        </div>
+        <div class="fn">
+          <div class="fn-sig"><span class="fn-name">shader_unload</span>(<span class="fn-param">handle</span>)</div>
+          <div class="fn-desc">Unload a shader and free its slot</div>
+        </div>
+      </div>
+
+      <!-- POLYGON -->
+      <div class="section" id="polygon">
+        <h2>POLYGON</h2>
+        <div class="note">Draw triangles and arbitrary polygons.</div>
+        <div class="fn">
+          <div class="fn-sig"><span class="fn-name">tri</span>(<span class="fn-param">x1</span>, <span class="fn-param">y1</span>, <span class="fn-param">x2</span>, <span class="fn-param">y2</span>, <span class="fn-param">x3</span>, <span class="fn-param">y3</span>, <span class="fn-opt">[color]</span>)</div>
+          <div class="fn-desc">Draw outlined triangle</div>
+        </div>
+        <div class="fn">
+          <div class="fn-sig"><span class="fn-name">trif</span>(<span class="fn-param">x1</span>, <span class="fn-param">y1</span>, <span class="fn-param">x2</span>, <span class="fn-param">y2</span>, <span class="fn-param">x3</span>, <span class="fn-param">y3</span>, <span class="fn-opt">[color]</span>)</div>
+          <div class="fn-desc">Draw filled triangle</div>
+        </div>
+        <div class="fn">
+          <div class="fn-sig"><span class="fn-name">poly</span>(<span class="fn-param">points</span>, <span class="fn-opt">[color]</span>)</div>
+          <div class="fn-desc">Draw outlined polygon. points: flat array {x1,y1, x2,y2, ...}</div>
+        </div>
+        <div class="fn">
+          <div class="fn-sig"><span class="fn-name">polyf</span>(<span class="fn-param">points</span>, <span class="fn-opt">[color]</span>)</div>
+          <div class="fn-desc">Draw filled polygon. points: flat array {x1,y1, x2,y2, ...}</div>
+        </div>
+      </div>
+
+      <!-- BEZIER CURVES -->
+      <div class="section" id="bezier">
+        <h2>BEZIER CURVES</h2>
+        <div class="note">Cubic bezier curves defined by start, two control points, and end.</div>
+        <div class="fn">
+          <div class="fn-sig"><span class="fn-name">bezier</span>(<span class="fn-param">x1</span>, <span class="fn-param">y1</span>, <span class="fn-param">cx1</span>, <span class="fn-param">cy1</span>, <span class="fn-param">cx2</span>, <span class="fn-param">cy2</span>, <span class="fn-param">x2</span>, <span class="fn-param">y2</span>, <span class="fn-opt">[color]</span>)</div>
+          <div class="fn-desc">Draw cubic bezier curve outline</div>
+        </div>
+        <div class="fn">
+          <div class="fn-sig"><span class="fn-name">bezierf</span>(<span class="fn-param">x1</span>, <span class="fn-param">y1</span>, <span class="fn-param">cx1</span>, <span class="fn-param">cy1</span>, <span class="fn-param">cx2</span>, <span class="fn-param">cy2</span>, <span class="fn-param">x2</span>, <span class="fn-param">y2</span>, <span class="fn-opt">[color]</span>)</div>
+          <div class="fn-desc">Draw filled closed bezier shape</div>
+        </div>
+        <div class="fn">
+          <div class="fn-sig"><span class="fn-name">bezier_point</span>(<span class="fn-param">x1</span>, <span class="fn-param">y1</span>, <span class="fn-param">cx1</span>, <span class="fn-param">cy1</span>, <span class="fn-param">cx2</span>, <span class="fn-param">cy2</span>, <span class="fn-param">x2</span>, <span class="fn-param">y2</span>, <span class="fn-param">t</span>)</div>
+          <div class="fn-ret">&rarr; x, y</div>
+          <div class="fn-desc">Get point on curve at parameter t (0..1)</div>
+        </div>
+        <div class="fn">
+          <div class="fn-sig"><span class="fn-name">bezier_points</span>(<span class="fn-param">x1</span>, <span class="fn-param">y1</span>, <span class="fn-param">cx1</span>, <span class="fn-param">cy1</span>, <span class="fn-param">cx2</span>, <span class="fn-param">cy2</span>, <span class="fn-param">x2</span>, <span class="fn-param">y2</span>, <span class="fn-opt">[segments]</span>)</div>
+          <div class="fn-ret">&rarr; table</div>
+          <div class="fn-desc">Get subdivided points along curve. segments defaults to 16. Returns flat array {x1,y1, x2,y2, ...}</div>
+        </div>
+      </div>
+
+      <!-- MASK -->
+      <div class="section" id="mask">
+        <h2>MASK</h2>
+        <div class="note">Draw a shape mask, then restrict subsequent drawing to inside or outside of the mask.</div>
+        <div class="fn">
+          <div class="fn-sig"><span class="fn-name">mask</span>()</div>
+          <div class="fn-desc">Begin capturing a mask. All drawing writes to the mask buffer instead of screen.</div>
+        </div>
+        <div class="fn">
+          <div class="fn-sig"><span class="fn-name">mask_apply</span>(<span class="fn-opt">[mode]</span>)</div>
+          <div class="fn-desc">Apply the captured mask. mode: Mask.Inside (default) or Mask.Outside</div>
+        </div>
+        <div class="fn">
+          <div class="fn-sig"><span class="fn-name">mask_end</span>()</div>
+          <div class="fn-desc">End masking and return to normal drawing</div>
+        </div>
+        <div class="fn">
+          <div class="fn-sig"><span class="fn-name">Mask</span>.<span class="fn-param">Inside</span> / <span class="fn-name">Mask</span>.<span class="fn-param">Outside</span></div>
+          <div class="fn-desc">Constants for mask_apply mode</div>
+        </div>
+      </div>
+
       <!-- KEYBOARD & BUTTONS -->
       <div class="section" id="keyboard">
         <h2>KEYBOARD &amp; BUTTONS</h2>
@@ -1804,6 +1900,90 @@ print(GLYPH.TRI_RIGHT .. " PLAY", 4, 50, 7)</code></pre>
 <span class="c-kw">local</span> t = <span class="c-fn">get_tile</span>(lvl, <span class="c-num">1</span>, <span class="c-num">2</span>)
 <span class="c-comment">-- t == 5</span></pre>
           </div>
+        </div>
+      </div>
+
+      <!-- PHYSICS -->
+      <div class="section" id="physics">
+        <h2>PHYSICS</h2>
+        <div class="note">Built-in 2D physics with automatic fixed-timestep simulation. Create bodies, apply forces, and detect collisions.</div>
+        <div class="fn">
+          <div class="fn-sig"><span class="fn-name">gravity</span>(<span class="fn-param">gx</span>, <span class="fn-param">gy</span>)</div>
+          <div class="fn-desc">Set global gravity (e.g., gravity(0, 200))</div>
+        </div>
+        <div class="fn">
+          <div class="fn-sig"><span class="fn-name">body</span>(<span class="fn-param">shape</span>, <span class="fn-param">x</span>, <span class="fn-param">y</span>, <span class="fn-param">w_or_r</span>, <span class="fn-opt">[h]</span>)</div>
+          <div class="fn-ret">&rarr; integer</div>
+          <div class="fn-desc">Create a physics body. shape: "circle", "box", or "static_box". Returns body handle.</div>
+        </div>
+        <div class="fn">
+          <div class="fn-sig"><span class="fn-name">body_pos</span>(<span class="fn-param">id</span>)</div>
+          <div class="fn-ret">&rarr; x, y</div>
+          <div class="fn-desc">Get body position</div>
+        </div>
+        <div class="fn">
+          <div class="fn-sig"><span class="fn-name">body_vel</span>(<span class="fn-param">id</span>)</div>
+          <div class="fn-ret">&rarr; vx, vy</div>
+          <div class="fn-desc">Get body velocity</div>
+        </div>
+        <div class="fn">
+          <div class="fn-sig"><span class="fn-name">body_angle</span>(<span class="fn-param">id</span>)</div>
+          <div class="fn-ret">&rarr; number</div>
+          <div class="fn-desc">Get body rotation angle in radians</div>
+        </div>
+        <div class="fn">
+          <div class="fn-sig"><span class="fn-name">body_set_pos</span>(<span class="fn-param">id</span>, <span class="fn-param">x</span>, <span class="fn-param">y</span>)</div>
+          <div class="fn-desc">Set body position</div>
+        </div>
+        <div class="fn">
+          <div class="fn-sig"><span class="fn-name">body_set_vel</span>(<span class="fn-param">id</span>, <span class="fn-param">vx</span>, <span class="fn-param">vy</span>)</div>
+          <div class="fn-desc">Set body velocity</div>
+        </div>
+        <div class="fn">
+          <div class="fn-sig"><span class="fn-name">body_set_angle</span>(<span class="fn-param">id</span>, <span class="fn-param">angle</span>)</div>
+          <div class="fn-desc">Set body rotation angle</div>
+        </div>
+        <div class="fn">
+          <div class="fn-sig"><span class="fn-name">body_push</span>(<span class="fn-param">id</span>, <span class="fn-param">fx</span>, <span class="fn-param">fy</span>)</div>
+          <div class="fn-desc">Apply continuous force to body</div>
+        </div>
+        <div class="fn">
+          <div class="fn-sig"><span class="fn-name">body_impulse</span>(<span class="fn-param">id</span>, <span class="fn-param">ix</span>, <span class="fn-param">iy</span>)</div>
+          <div class="fn-desc">Apply instant impulse to body</div>
+        </div>
+        <div class="fn">
+          <div class="fn-sig"><span class="fn-name">on_collide</span>(<span class="fn-param">id_a</span>, <span class="fn-param">id_b</span>, <span class="fn-param">callback</span>)</div>
+          <div class="fn-desc">Register collision callback. callback(a, b) called when bodies begin colliding.</div>
+        </div>
+        <div class="fn">
+          <div class="fn-sig"><span class="fn-name">on_separate</span>(<span class="fn-param">id_a</span>, <span class="fn-param">id_b</span>, <span class="fn-param">callback</span>)</div>
+          <div class="fn-desc">Register separation callback. callback(a, b) called when bodies stop colliding.</div>
+        </div>
+        <div class="fn">
+          <div class="fn-sig"><span class="fn-name">body_group</span>(<span class="fn-param">id</span>, <span class="fn-param">group</span>)</div>
+          <div class="fn-desc">Set collision group for a body</div>
+        </div>
+        <div class="fn">
+          <div class="fn-sig"><span class="fn-name">body_ignore</span>(<span class="fn-param">group_a</span>, <span class="fn-param">group_b</span>)</div>
+          <div class="fn-desc">Set two groups to ignore collisions with each other</div>
+        </div>
+        <div class="fn">
+          <div class="fn-sig"><span class="fn-name">body_at</span>(<span class="fn-param">x</span>, <span class="fn-param">y</span>)</div>
+          <div class="fn-ret">&rarr; integer|nil</div>
+          <div class="fn-desc">Query for a body at a point</div>
+        </div>
+        <div class="fn">
+          <div class="fn-sig"><span class="fn-name">body_raycast</span>(<span class="fn-param">x1</span>, <span class="fn-param">y1</span>, <span class="fn-param">x2</span>, <span class="fn-param">y2</span>)</div>
+          <div class="fn-ret">&rarr; id, x, y | nil</div>
+          <div class="fn-desc">Cast a ray and return the first body hit with hit point</div>
+        </div>
+        <div class="fn">
+          <div class="fn-sig"><span class="fn-name">body_destroy</span>(<span class="fn-param">id</span>)</div>
+          <div class="fn-desc">Destroy a physics body</div>
+        </div>
+        <div class="fn">
+          <div class="fn-sig"><span class="fn-name">physics_draw</span>()</div>
+          <div class="fn-desc">Draw debug visualization of all physics bodies</div>
         </div>
       </div>
 
