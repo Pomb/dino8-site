@@ -46,13 +46,12 @@
       font-size: 0.85rem;
     }
 
-    header a:hover {
-      text-decoration: underline;
-    }
+    header a:hover { text-decoration: underline; }
 
     h1 {
       font-size: 1.5rem;
       color: var(--accent);
+      text-align: center;
       margin: 1rem 0 0.5rem;
     }
 
@@ -62,18 +61,14 @@
       border-bottom: 1px solid #2a2040;
     }
 
-    .release:last-child {
-      border-bottom: none;
-    }
+    .release:last-child { border-bottom: none; }
 
     .release h2 {
       font-size: 1.1rem;
       margin-bottom: 0.75rem;
     }
 
-    .release h2 .version {
-      color: var(--accent);
-    }
+    .release h2 .version { color: var(--accent); }
 
     .release h2 .date {
       color: var(--dim);
@@ -85,6 +80,7 @@
       font-size: 0.85rem;
       color: var(--orange);
       margin: 0.75rem 0 0.25rem;
+      text-transform: capitalize;
     }
 
     .release ul {
@@ -95,7 +91,6 @@
     .release ul li {
       padding-left: 1.2em;
       position: relative;
-      color: var(--text);
       font-size: 0.9rem;
     }
 
@@ -120,127 +115,29 @@
       <a href="index.html">&larr; dino8</a>
       <h1>CHANGELOG</h1>
     </header>
-
-<!-- CHANGELOG_START -->
-    <div class="release">
-      <h2><span class="version">0.2.0</span> <span class="date">&mdash; 2026-03-16</span></h2>
-      <h3>Added</h3>
-      <ul>
-        <li><code>fillp()</code> pattern fills with glyph and PATTERN presets</li>
-        <li>multi-player input support (4 players, per-player bindings)</li>
-        <li>native exports for macOS, Linux, and Windows</li>
-      </ul>
-      <h3>Changed</h3>
-      <ul>
-        <li>Sync API docs for fillp, multi-player input, and gamepad_count</li>
-        <li>Ignore examples/.DS_Store</li>
-      </ul>
-    </div>
-
-    <div class="release">
-      <h2><span class="version">0.1.4</span> <span class="date">&mdash; 2026-03-15</span></h2>
-      <h3>Added</h3>
-      <ul>
-        <li>GLYPH global table with symbol glyphs via dino8.ttf</li>
-        <li>GLYPH table docs and dino8 font to web API page</li>
-        <li>font test assets and fontgen tool</li>
-        <li>bumper_l/bumper_r input actions with Q/E keyboard defaults</li>
-        <li>bumper_l/bumper_r glyphs (0x89/0x8A) and input glyph variants</li>
-        <li>changelog system with CLI command and web page</li>
-      </ul>
-      <h3>Changed</h3>
-      <ul>
-        <li>Track download counts by platform, version, and examples in KV</li>
-        <li>bundled fonts with custom dino8.ttf</li>
-        <li><code>_render</code> callback to <code>_draw</code></li>
-        <li>pause menu to use dino8.ttf glyphs and fix controls layout</li>
-        <li>Normalize indentation in profiler and renderer</li>
-        <li>fontstyle test and platformer example for dino8 font</li>
-        <li>version string to dev build marker</li>
-        <li>iOS Xcode projects to reference dino8.ttf</li>
-        <li>map docs to use <code>_draw</code> callback name</li>
-        <li>Highlight bumper outlines during remap, add bumper actions to remap screen</li>
-        <li>font test to use bumper buttons for page switching</li>
-        <li>Rebrand from "retro game toolkit" to "retro game SDK"</li>
-        <li>updated splash images</li>
-      </ul>
-    </div>
-
-    <div class="release">
-      <h2><span class="version">0.1.3</span> <span class="date">&mdash; 2026-03-14</span></h2>
-      <h3>Added</h3>
-      <ul>
-        <li><code>fget</code>/<code>fset</code>, collision, math utilities, and easing functions</li>
-      </ul>
-      <h3>Changed</h3>
-      <ul>
-        <li>Cache version check to reduce Cloudflare requests (12h TTL)</li>
-        <li>Rebrand as retro game toolkit, add network API docs</li>
-        <li>Sync API docs for new functions</li>
-        <li>Update splash image and web header</li>
-      </ul>
-    </div>
-
-    <div class="release">
-      <h2><span class="version">0.1.2</span> <span class="date">&mdash; 2026-03-13</span></h2>
-      <h3>Added</h3>
-      <ul>
-        <li>Self-update with HMAC-signed downloads and binary swap</li>
-        <li><code>engine</code> version compatibility check to config system</li>
-        <li><code>dino8 examples</code> command to download example projects from R2</li>
-        <li>VSCode extension, move Lua settings to <code>.luarc.json</code></li>
-      </ul>
-      <h3>Changed</h3>
-      <ul>
-        <li>Rename worker to <code>dino8</code>, add HMAC update download endpoint</li>
-        <li>Update examples with <code>engine</code> field, refactor platformer into modules</li>
-        <li>Simplify R2 key structure to use major version folders</li>
-      </ul>
-      <h3>Fixed</h3>
-      <ul>
-        <li>Volume control wrap-around and double-consume in options menu</li>
-      </ul>
-    </div>
-
-    <div class="release">
-      <h2><span class="version">0.1.1</span> <span class="date">&mdash; 2026-03-12</span></h2>
-      <h3>Added</h3>
-      <ul>
-        <li><code>printo</code>, <code>spro</code>, <code>cam_deadzone</code>, CONFIG global, 2D tileset grid</li>
-        <li>Splash boot screen with custom font</li>
-        <li>Example games (platformer with sprites, enemies, dead-zone camera)</li>
-      </ul>
-      <h3>Changed</h3>
-      <ul>
-        <li>Update API docs for new engine functions</li>
-        <li>Update web docs and game entry</li>
-      </ul>
-    </div>
-
-    <div class="release">
-      <h2><span class="version">0.1.0</span> <span class="date">&mdash; 2026-03-12</span></h2>
-      <h3>Added</h3>
-      <ul>
-        <li>Core engine: graphics, input, audio, camera, level/tilemap, JSON, persistence</li>
-        <li>Lua scripting with hot reload</li>
-        <li>CLI: run, fossilize, extract, validate, info, list, create, export, push</li>
-        <li>Web export (Emscripten/WebAssembly)</li>
-        <li>iOS export</li>
-        <li>Pause menu with settings, filters, and key remapping</li>
-        <li>WebSocket networking (librws)</li>
-        <li>Snapshot and GIF recording</li>
-        <li>Custom font rendering with <code>font_style</code></li>
-        <li>GitHub Actions release workflow for Windows, Linux, macOS</li>
-        <li>Cloudflare R2 distribution with download worker</li>
-        <li>API documentation website</li>
-      </ul>
-      <h3>Fixed</h3>
-      <ul>
-        <li>Cross-platform build issues for Windows and Linux</li>
-      </ul>
-    </div>
-<!-- CHANGELOG_END -->
-
+    <div id="changelog"></div>
   </div>
+  <script>
+    function escapeHtml(str) {
+      return str.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+    }
+
+    function renderItem(text) {
+      return escapeHtml(text).replace(/`([^`]+)`/g, '<code>$1</code>');
+    }
+
+    fetch('https://dino8.pmlomb.workers.dev/changelog')
+      .then(r => r.json())
+      .then(data => {
+        const html = data.entries.map(entry => {
+          let sections = '';
+          for (const [name, items] of Object.entries(entry.sections)) {
+            sections += `<h3>${name}</h3><ul>${items.map(i => `<li>${renderItem(i)}</li>`).join('')}</ul>`;
+          }
+          return `<div class="release"><h2><span class="version">${escapeHtml(entry.version)}</span> <span class="date">&mdash; ${escapeHtml(entry.date)}</span></h2>${sections}</div>`;
+        }).join('');
+        document.getElementById('changelog').innerHTML = html;
+      });
+  </script>
 </body>
 </html>
