@@ -496,6 +496,9 @@ footer {
   padding: 2.5rem 0 2rem;
   color: #4E4A4E;
   font-size: 0.75rem;
+  display: flex;
+  justify-content: center;
+  gap: 1.5rem;
 }
 
 footer a {
