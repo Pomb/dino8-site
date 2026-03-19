@@ -509,15 +509,17 @@
       </div>
 
       <!-- FONT -->
-      <div class="section" id="font">
+      <div class="section section-with-example" id="font">
         <h2>FONT</h2>
         <p>Dino8 includes a built-in pixel font (<code>dino8.ttf</code>) with broad multilingual coverage plus custom glyphs for input controls and symbols.</p>
+        <div class="section-split">
+          <div class="section-docs">
 
         <h3>Supported Character Sets</h3>
 
         <h3>Basic Latin + Western European</h3>
         <p>Full diacritic coverage for all standard ASCII characters plus accented and special letters used by English, French, German, Spanish, Italian, Portuguese, Dutch, Swedish, Norwegian, Danish, Finnish, Polish, Turkish, and other Latin-script languages.</p>
-        <table>
+        <table class="charset-table">
           <tr><th>Language</th><th>Extra Characters</th></tr>
           <tr><td>French</td><td class="dino8-glyph" style="font-size:1rem">&#xe9; &#xe8; &#xea; &#xeb; &#xee; &#xef; &#xf4; &#xfb; &#xf9; &#xe7; &#xe0;</td></tr>
           <tr><td>German</td><td class="dino8-glyph" style="font-size:1rem">&#xe4; &#xf6; &#xfc; &#xdf;</td></tr>
@@ -527,7 +529,7 @@
 
         <h3>Japanese (Complete Syllabary)</h3>
         <p>Full support for modern game text with all 46 Hiragana, all 46 Katakana, dakuten (voiced) and handakuten (half-voiced) forms, all small/y&#x14D;on combinations, and double-consonant support.</p>
-        <table>
+        <table class="charset-table">
           <tr><th>Set</th><th>Coverage</th></tr>
           <tr><td>Hiragana</td><td class="dino8-glyph" style="font-size:1rem">&#x3042;&#x3044;&#x3046;&#x3048;&#x304A; &#x304B;&#x304D;&#x304F;&#x3051;&#x3053; &#x3055;&#x3057;&#x3059;&#x305B;&#x305D; &#x305F;&#x3061;&#x3064;&#x3066;&#x3068; &#x306A;&#x306B;&#x306C;&#x306D;&#x306E; &#x306F;&#x3072;&#x3075;&#x3078;&#x307B; &#x307E;&#x307F;&#x3080;&#x3081;&#x3082; &#x3084;&#x3086;&#x3088; &#x3089;&#x308A;&#x308B;&#x308C;&#x308D; &#x308F;&#x3092;&#x3093;</td></tr>
           <tr><td>Katakana</td><td class="dino8-glyph" style="font-size:1rem">&#x30A2;&#x30A4;&#x30A6;&#x30A8;&#x30AA; &#x30AB;&#x30AD;&#x30AF;&#x30B1;&#x30B3; &#x30B5;&#x30B7;&#x30B9;&#x30BB;&#x30BD; &#x30BF;&#x30C1;&#x30C4;&#x30C6;&#x30C8; &#x30CA;&#x30CB;&#x30CC;&#x30CD;&#x30CE; &#x30CF;&#x30D2;&#x30D5;&#x30D8;&#x30DB; &#x30DE;&#x30DF;&#x30E0;&#x30E1;&#x30E2; &#x30E4;&#x30E6;&#x30E8; &#x30E9;&#x30EA;&#x30EB;&#x30EC;&#x30ED; &#x30EF;&#x30F2;&#x30F3;&#x30FC;</td></tr>
@@ -589,15 +591,21 @@
           <tr><td class="dino8-glyph">&#x2666;</td><td>Diamond</td><td><code>GLYPH.DIAMOND</code></td></tr>
         </table>
 
-        <h3>Example</h3>
-        <pre><code>-- Input glyphs via GLYPH table
-print(GLYPH.UP .. GLYPH.DOWN .. GLYPH.LEFT .. GLYPH.RIGHT .. " TO MOVE", 4, 10, 7)
-print(GLYPH.ACTION_A .. " JUMP  " .. GLYPH.ACTION_B .. " ATTACK", 4, 20, 7)
+          </div>
+          <div class="section-example">
+            <div class="example-label">EXAMPLE</div>
+<pre class="conf-example"><span class="c-kw">function</span> <span class="c-fn">_draw</span>()
+  <span class="c-comment">-- Input glyphs via GLYPH table</span>
+  <span class="c-fn">print</span>(GLYPH.UP .. GLYPH.DOWN .. GLYPH.LEFT .. GLYPH.RIGHT .. <span class="c-str">" TO MOVE"</span>, <span class="c-num">4</span>, <span class="c-num">10</span>, <span class="c-num">7</span>)
+  <span class="c-fn">print</span>(GLYPH.ACTION_A .. <span class="c-str">" JUMP  "</span> .. GLYPH.ACTION_B .. <span class="c-str">" ATTACK"</span>, <span class="c-num">4</span>, <span class="c-num">20</span>, <span class="c-num">7</span>)
 
--- Symbol glyphs via GLYPH table
-print(GLYPH.HEART .. " LIVES: 3", 4, 30, 8)
-print(GLYPH.STAR .. " SCORE: 1000", 4, 40, 10)
-print(GLYPH.TRI_RIGHT .. " PLAY", 4, 50, 7)</code></pre>
+  <span class="c-comment">-- Symbol glyphs via GLYPH table</span>
+  <span class="c-fn">print</span>(GLYPH.HEART .. <span class="c-str">" LIVES: 3"</span>, <span class="c-num">4</span>, <span class="c-num">30</span>, <span class="c-num">8</span>)
+  <span class="c-fn">print</span>(GLYPH.STAR .. <span class="c-str">" SCORE: 1000"</span>, <span class="c-num">4</span>, <span class="c-num">40</span>, <span class="c-num">10</span>)
+  <span class="c-fn">print</span>(GLYPH.TRI_RIGHT .. <span class="c-str">" PLAY"</span>, <span class="c-num">4</span>, <span class="c-num">50</span>, <span class="c-num">7</span>)
+<span class="c-kw">end</span></pre>
+          </div>
+        </div>
       </div>
 
       <!-- SPRITES -->

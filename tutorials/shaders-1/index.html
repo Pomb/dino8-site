@@ -1,0 +1,439 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Dino8 Tutorial: Shaders</title>
+  <link rel="icon" href="../../favicon.ico" type="image/x-icon">
+  <link rel="stylesheet" href="../../shared.css">
+  <link rel="stylesheet" href="../tutorial.css">
+</head>
+<body>
+  <div class="layout">
+    <nav>
+      <a href="../../" class="back">&larr; Dino8</a>
+      <h3>STEPS</h3>
+      <a href="#step-1">1. Load a shader</a>
+      <a href="#step-2">2. Initial uniforms</a>
+      <a href="#step-3">3. Update at runtime</a>
+      <a href="#step-4">4. Localized shaders</a>
+      <a href="#step-5">5. Multi-color masks</a>
+    </nav>
+
+    <main>
+      <h1>CUSTOM SHADERS</h1>
+      <p class="subtitle">Learn how to hook up GLSL shaders in Dino8 in 5 steps.</p>
+
+      <!-- STEP 1 -->
+      <div class="step" id="step-1">
+        <div class="step-header">
+          <span class="step-number">STEP 1</span>
+          <span class="step-title">Load a shader</span>
+        </div>
+        <div class="step-split">
+          <div class="step-docs">
+            <p>Dino8 lets you write custom fragment shaders in GLSL. A shader is a small program that runs on the GPU and transforms every pixel on screen.</p>
+            <p>Load a shader with <code>shader_load(name, source)</code>. The source can be a file path or inline GLSL:</p>
+            <div class="api-intro">Two ways to load:</div>
+            <div class="api-list">
+              <div><code>shader_load("fx", "shaders/fx.glsl")</code> <span>file path (contains "/" or ends in ".glsl")</span></div>
+              <div><code>shader_load("fx", [[ ...glsl... ]])</code> <span>inline source (everything else)</span></div>
+            </div>
+            <p>We'll use the <strong>collapse</strong> shader as our example. It snaps pixel colors toward a target color &mdash; any pixel close enough to the target gets pulled all the way to it, creating a posterization effect.</p>
+            <div class="gif-container">
+              <img src="step-01.gif" alt="Step 1: colored bars without shader" onerror="this.parentElement.innerHTML='<div class=gif-placeholder>coming soon</div>'">
+            </div>
+            <p>Use these macros instead of raw GLSL for cross-platform compatibility:</p>
+            <div class="api-list">
+              <div><code>VARYING</code> <span>declares an input from the vertex stage</span></div>
+              <div><code>TEXTURE2D(tex, uv)</code> <span>samples a texture</span></div>
+              <div><code>FRAGCOLOR</code> <span>the output pixel color</span></div>
+            </div>
+          </div>
+          <div class="step-code">
+            <div class="code-block">
+              <div class="code-label">shaders/collapse.glsl</div>
+<pre><span class="c-kw">VARYING</span> <span class="c-kw">vec2</span> UV;
+<span class="c-kw">uniform</span> <span class="c-kw">sampler2D</span> SCREEN;
+<span class="c-kw">uniform</span> <span class="c-kw">float</span> amount;
+<span class="c-kw">uniform</span> <span class="c-kw">vec3</span> target;
+<span class="c-kw">void</span> <span class="c-fn">main</span>() {
+    <span class="c-kw">vec4</span> color = <span class="c-fn">TEXTURE2D</span>(SCREEN, UV);
+    <span class="c-kw">float</span> dist = <span class="c-fn">distance</span>(color.rgb, target);
+    <span class="c-kw">float</span> threshold = amount * <span class="c-num">1.8</span>;
+    <span class="c-kw">float</span> snap = <span class="c-fn">step</span>(dist, threshold);
+    FRAGCOLOR = <span class="c-kw">vec4</span>(
+        <span class="c-fn">mix</span>(color.rgb, target, snap),
+        color.a
+    );
+}</pre>
+            </div>
+            <div class="code-block">
+              <div class="code-label">main.d8</div>
+<pre><span class="c-comment">-- load from file:</span>
+<span class="c-comment">-- local collapse = shader_load("collapse", "shaders/collapse.glsl")</span>
+
+<span class="c-comment">-- or load inline:</span>
+<span class="c-kw">local</span> collapse = <span class="c-fn">shader_load</span>(<span class="c-str">"collapse"</span>, <span class="c-str">[[
+    VARYING vec2 UV;
+    uniform sampler2D SCREEN;
+    uniform float amount;
+    uniform vec3 target;
+    void main() {
+        vec4 color = TEXTURE2D(SCREEN, UV);
+        float dist = distance(color.rgb, target);
+        float threshold = amount * 1.8;
+        float snap = step(dist, threshold);
+        FRAGCOLOR = vec4(
+            mix(color.rgb, target, snap),
+            color.a
+        );
+    }
+]]</span>)
+
+<span class="c-kw">function</span> <span class="c-fn">_draw</span>()
+  <span class="c-fn">cls</span>(<span class="c-num">1</span>)
+  <span class="c-kw">for</span> i = <span class="c-num">1</span>, <span class="c-num">10</span> <span class="c-kw">do</span>
+    <span class="c-fn">rectf</span>(<span class="c-num">10</span>, <span class="c-num">10</span> + i * <span class="c-num">10</span>, <span class="c-num">118</span>, <span class="c-num">16</span> + i * <span class="c-num">10</span>, (i % <span class="c-num">15</span>) + <span class="c-num">1</span>)
+  <span class="c-kw">end</span>
+<span class="c-kw">end</span></pre>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- STEP 2 -->
+      <div class="step" id="step-2">
+        <div class="step-header">
+          <span class="step-number">STEP 2</span>
+          <span class="step-title">Initial uniforms</span>
+        </div>
+        <div class="step-split">
+          <div class="step-docs">
+            <p>Our collapse shader declares two uniforms &mdash; <code>amount</code> and <code>target</code> &mdash; but we haven't set them yet, so the effect does nothing.</p>
+            <p>Pass a table of initial values as the third argument to <code>shader_load</code>:</p>
+            <div class="api-intro">Value types:</div>
+            <div class="api-list">
+              <div><code>amount = 0.5</code> <span>number &rarr; <code>float</code></span></div>
+              <div><code>target = rgb(16)</code> <span>table of 3 &rarr; <code>vec3</code></span></div>
+              <div><code>tint = {1,0,0,1}</code> <span>table of 4 &rarr; <code>vec4</code></span></div>
+            </div>
+            <p>The <code>rgb(index)</code> function returns a palette color as <code>{r, g, b}</code> with values from 0.0 to 1.0 &mdash; exactly what shaders expect.</p>
+            <p>With <code>amount</code> at 0.5 and <code>target</code> set to palette color 16 (white), any pixel whose color is close enough to white will snap to white.</p>
+            <p>To apply a shader as a full-screen post-process effect, pass <code>true</code> as the last argument to <code>shader_load</code>. You can also add or remove shaders from the post-process pipeline later with <code>post_process_add(handle)</code> and <code>post_process_remove(handle)</code>.</p>
+            <div class="alt-box">
+              <div class="alt-label">ENGINE UNIFORMS</div>
+              <p>These are set automatically &mdash; just declare them in your GLSL:</p>
+<pre><span class="c-comment">SCREEN</span>          sampler2D   current screen pixels
+<span class="c-comment">RESOLUTION</span>      vec2        screen size
+<span class="c-comment">TIME</span>            float       seconds since start
+<span class="c-comment">MOUSE</span>           vec2        normalized mouse pos
+<span class="c-comment">PALETTE</span>         sampler2D   palette as 1D texture
+<span class="c-comment">PALETTE_SIZE</span>    float       number of palette colors</pre>
+            </div>
+          </div>
+          <div class="step-code">
+            <div class="code-block">
+              <div class="code-label">main.d8</div>
+<pre><span class="c-kw">local</span> collapse = <span class="c-fn">shader_load</span>(<span class="c-str">"collapse"</span>, <span class="c-str">[[
+    VARYING vec2 UV;
+    uniform sampler2D SCREEN;
+    uniform float amount;
+    uniform vec3 target;
+    void main() {
+        vec4 color = TEXTURE2D(SCREEN, UV);
+        float dist = distance(color.rgb, target);
+        float threshold = amount * 1.8;
+        float snap = step(dist, threshold);
+        FRAGCOLOR = vec4(
+            mix(color.rgb, target, snap),
+            color.a
+        );
+    }
+]]</span>, {
+  amount = <span class="c-num">0.5</span>,
+  target = <span class="c-fn">rgb</span>(<span class="c-num">16</span>),
+}, <span class="c-kw">true</span>)</pre>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- STEP 3 -->
+      <div class="step" id="step-3">
+        <div class="step-header">
+          <span class="step-number">STEP 3</span>
+          <span class="step-title">Update at runtime</span>
+        </div>
+        <div class="step-split">
+          <div class="step-docs">
+            <p>Use <code>shader_set</code> to change uniform values every frame. This is how you animate or control shader effects interactively.</p>
+            <div class="api-intro">New functions:</div>
+            <div class="api-list">
+              <div><code>shader_set(handle, name, value)</code> <span>set a uniform &mdash; pass a number or a table</span></div>
+            </div>
+            <p>For a float uniform, pass a number. For a vec3, pass a table of 3 values &mdash; <code>rgb()</code> returns exactly that, so you can feed it directly.</p>
+            <p>Here we use up/down to control the collapse amount, and A/B to cycle through palette colors as the target. Try it &mdash; at high amounts, most of the screen snaps to a single color.</p>
+            <div class="gif-container">
+              <img src="step-03.gif" alt="Step 3: interactive collapse shader" onerror="this.parentElement.innerHTML='<div class=gif-placeholder>coming soon</div>'">
+            </div>
+          </div>
+          <div class="step-code">
+            <div class="code-block">
+              <div class="code-label">main.d8</div>
+<pre><span class="c-kw">local</span> amount = <span class="c-num">0.0</span>
+<span class="c-kw">local</span> target_idx = <span class="c-num">16</span>
+
+<span class="c-kw">local</span> collapse = <span class="c-fn">shader_load</span>(<span class="c-str">"collapse"</span>, <span class="c-str">[[
+    VARYING vec2 UV;
+    uniform sampler2D SCREEN;
+    uniform float amount;
+    uniform vec3 target;
+    void main() {
+        vec4 color = TEXTURE2D(SCREEN, UV);
+        float dist = distance(color.rgb, target);
+        float threshold = amount * 1.8;
+        float snap = step(dist, threshold);
+        FRAGCOLOR = vec4(
+            mix(color.rgb, target, snap),
+            color.a
+        );
+    }
+]]</span>, {
+  amount = <span class="c-num">0.0</span>,
+  target = <span class="c-fn">rgb</span>(<span class="c-num">16</span>),
+}, <span class="c-kw">true</span>)
+
+<span class="c-kw">function</span> <span class="c-fn">_update</span>()
+  <span class="c-kw">if</span> <span class="c-fn">btn</span>(<span class="c-num">2</span>) <span class="c-kw">then</span>
+    amount = <span class="c-fn">min</span>(amount + <span class="c-num">0.02</span>, <span class="c-num">1.0</span>)
+  <span class="c-kw">end</span>
+  <span class="c-kw">if</span> <span class="c-fn">btn</span>(<span class="c-num">3</span>) <span class="c-kw">then</span>
+    amount = <span class="c-fn">max</span>(amount - <span class="c-num">0.02</span>, <span class="c-num">0.0</span>)
+  <span class="c-kw">end</span>
+  <span class="c-fn">shader_set</span>(collapse, <span class="c-str">"amount"</span>, amount)
+
+  <span class="c-kw">if</span> <span class="c-fn">btnp</span>(<span class="c-num">4</span>) <span class="c-kw">then</span>
+    target_idx = (target_idx % <span class="c-num">16</span>) + <span class="c-num">1</span>
+    <span class="c-fn">shader_set</span>(collapse, <span class="c-str">"target"</span>, <span class="c-fn">rgb</span>(target_idx))
+  <span class="c-kw">end</span>
+<span class="c-kw">end</span>
+
+<span class="c-kw">function</span> <span class="c-fn">_draw</span>()
+  <span class="c-fn">cls</span>(<span class="c-num">1</span>)
+  <span class="c-kw">for</span> i = <span class="c-num">1</span>, <span class="c-num">10</span> <span class="c-kw">do</span>
+    <span class="c-fn">rectf</span>(<span class="c-num">10</span>, <span class="c-num">10</span> + i * <span class="c-num">10</span>, <span class="c-num">118</span>, <span class="c-num">16</span> + i * <span class="c-num">10</span>, (i % <span class="c-num">15</span>) + <span class="c-num">1</span>)
+  <span class="c-kw">end</span>
+  <span class="c-kw">for</span> i = <span class="c-num">1</span>, <span class="c-num">5</span> <span class="c-kw">do</span>
+    <span class="c-fn">circf</span>(<span class="c-num">20</span> + i * <span class="c-num">20</span>, <span class="c-num">64</span> + <span class="c-fn">sin</span>(T + i) * <span class="c-num">20</span>, <span class="c-num">8</span>, (i % <span class="c-num">15</span>) + <span class="c-num">1</span>)
+  <span class="c-kw">end</span>
+  <span class="c-fn">print</span>(<span class="c-str">"collapse: "</span> .. <span class="c-fn">string.format</span>(<span class="c-str">"%.2f"</span>, amount), <span class="c-num">4</span>, <span class="c-num">4</span>, <span class="c-num">7</span>)
+<span class="c-kw">end</span></pre>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- STEP 4 -->
+      <div class="step" id="step-4">
+        <div class="step-header">
+          <span class="step-number">STEP 4</span>
+          <span class="step-title">Localized shaders</span>
+        </div>
+        <div class="step-split">
+          <div class="step-docs">
+            <p>So far the shader affects the entire screen. To apply it to only part of the screen, use <code>shader_apply</code> with a <strong>mask</strong>.</p>
+            <div class="api-intro">New functions:</div>
+            <div class="api-list">
+              <div><code>shader_apply(handle, mask_rt, x, y)</code> <span>apply shader mid-draw using a render target as mask</span></div>
+              <div><code>rt_create(slot, w, h)</code> <span>create a render target</span></div>
+              <div><code>rt_target(slot)</code> <span>redirect drawing to a render target (or back to screen)</span></div>
+            </div>
+            <p>A mask is a render target you draw into. The mask controls <em>where</em> the shader runs:</p>
+            <div class="api-list">
+              <div><code>transparent pixels</code> <span>&rarr; no effect (screen unchanged)</span></div>
+              <div><code>any color</code> <span>&rarr; shader applies here</span></div>
+            </div>
+            <p>First, create a render target with <code>rt_create(slot, w, h)</code>. The slot is a number from 1 to 8 &mdash; it's just an ID to refer to this render target later. Then redirect drawing into it with <code>rt_target(slot)</code>, draw your shapes, and call <code>rt_target()</code> with no argument to switch back to the screen.</p>
+            <p>Build up the mask with as many draw calls as you like &mdash; circles, rectangles, lines, whatever. Anywhere you draw is where the shader will run. Here we combine a circle and a rectangle into a single mask:</p>
+            <div class="gif-container">
+              <img src="step-04-localized.gif" alt="Step 4: localized shader with mask" onerror="this.parentElement.innerHTML='<div class=gif-placeholder>coming soon</div>'">
+            </div>
+            <p>The mask can be any size and positioned anywhere on screen with the <code>x, y</code> arguments to <code>shader_apply</code>.</p>
+            <p>Note that we use <code>shader_apply</code> inside <code>_draw()</code> instead of the post-process flag &mdash; this runs the shader on the current screen contents at that moment, rather than as a final post-process pass.</p>
+          </div>
+          <div class="step-code">
+            <div class="code-block">
+              <div class="code-label">main.d8</div>
+<pre><span class="c-kw">local</span> amount = <span class="c-num">0.0</span>
+
+<span class="c-kw">local</span> collapse = <span class="c-fn">shader_load</span>(<span class="c-str">"collapse"</span>, <span class="c-str">[[
+    VARYING vec2 UV;
+    uniform sampler2D SCREEN;
+    uniform float amount;
+    uniform vec3 target;
+    void main() {
+        vec4 color = TEXTURE2D(SCREEN, UV);
+        float dist = distance(color.rgb, target);
+        float threshold = amount * 1.8;
+        float snap = step(dist, threshold);
+        FRAGCOLOR = vec4(
+            mix(color.rgb, target, snap),
+            color.a
+        );
+    }
+]]</span>, {
+  amount = <span class="c-num">0.0</span>,
+  target = <span class="c-fn">rgb</span>(<span class="c-num">16</span>),
+})
+
+<span class="c-comment">-- create mask in render target slot 1 (slots 1-8)</span>
+<span class="c-kw">local</span> mask = <span class="c-num">1</span>
+<span class="c-fn">rt_create</span>(mask, <span class="c-num">80</span>, <span class="c-num">80</span>)
+<span class="c-fn">rt_target</span>(mask)
+<span class="c-fn">circf</span>(<span class="c-num">40</span>, <span class="c-num">30</span>, <span class="c-num">25</span>, <span class="c-num">7</span>)
+<span class="c-fn">rectf</span>(<span class="c-num">15</span>, <span class="c-num">50</span>, <span class="c-num">65</span>, <span class="c-num">70</span>, <span class="c-num">7</span>)
+<span class="c-fn">rt_target</span>()  <span class="c-comment">-- back to screen</span>
+
+<span class="c-kw">function</span> <span class="c-fn">_update</span>()
+  <span class="c-kw">if</span> <span class="c-fn">btn</span>(<span class="c-num">2</span>) <span class="c-kw">then</span>
+    amount = <span class="c-fn">min</span>(amount + <span class="c-num">0.02</span>, <span class="c-num">1.0</span>)
+  <span class="c-kw">end</span>
+  <span class="c-kw">if</span> <span class="c-fn">btn</span>(<span class="c-num">3</span>) <span class="c-kw">then</span>
+    amount = <span class="c-fn">max</span>(amount - <span class="c-num">0.02</span>, <span class="c-num">0.0</span>)
+  <span class="c-kw">end</span>
+  <span class="c-fn">shader_set</span>(collapse, <span class="c-str">"amount"</span>, amount)
+<span class="c-kw">end</span>
+
+<span class="c-kw">function</span> <span class="c-fn">_draw</span>()
+  <span class="c-fn">cls</span>(<span class="c-num">1</span>)
+  <span class="c-kw">for</span> i = <span class="c-num">1</span>, <span class="c-num">10</span> <span class="c-kw">do</span>
+    <span class="c-fn">rectf</span>(<span class="c-num">10</span>, <span class="c-num">10</span> + i * <span class="c-num">10</span>, <span class="c-num">118</span>, <span class="c-num">16</span> + i * <span class="c-num">10</span>, (i % <span class="c-num">15</span>) + <span class="c-num">1</span>)
+  <span class="c-kw">end</span>
+
+  <span class="c-comment">-- only the masked area gets collapsed</span>
+  <span class="c-fn">shader_apply</span>(collapse, mask, <span class="c-num">24</span>, <span class="c-num">24</span>)
+
+  <span class="c-fn">print</span>(<span class="c-str">"collapse: "</span> .. <span class="c-fn">string.format</span>(<span class="c-str">"%.2f"</span>, amount), <span class="c-num">4</span>, <span class="c-num">4</span>, <span class="c-num">7</span>)
+<span class="c-kw">end</span></pre>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- STEP 5 -->
+      <div class="step" id="step-5">
+        <div class="step-header">
+          <span class="step-number">STEP 5</span>
+          <span class="step-title">Multi-color masks</span>
+        </div>
+        <div class="step-split">
+          <div class="step-docs">
+            <p>The mask isn't just on/off &mdash; the shader receives it as a texture (<code>MASK</code>), so your GLSL can read the mask's <em>colors</em> to make per-pixel decisions.</p>
+            <p>Here we extend the collapse shader with two targets. The mask uses two colors:</p>
+            <div class="api-list">
+              <div><code>off-white area</code> <span>&rarr; collapses toward <code>target_a</code></span></div>
+              <div><code>red area</code> <span>&rarr; collapses toward <code>target_b</code></span></div>
+            </div>
+            <p>The shader picks between targets by comparing the mask pixel's red channel. To sample the mask correctly, convert screen UV to mask UV with the engine-provided <code>MASK_OFFSET</code> and <code>MASK_SIZE</code> uniforms.</p>
+            <p>Any area left transparent in the mask is still unaffected &mdash; so you can combine spatial masking with color-driven logic in a single pass.</p>
+            <div class="gif-container">
+              <img src="step-05-mask.gif" alt="Step 5: multi-color mask" onerror="this.parentElement.innerHTML='<div class=gif-placeholder>coming soon</div>'">
+              <img src="step-05.gif" alt="Step 5: multi-color mask result" onerror="this.parentElement.innerHTML='<div class=gif-placeholder>coming soon</div>'">
+            </div>
+          </div>
+          <div class="step-code">
+            <div class="code-block">
+              <div class="code-label">main.d8</div>
+<pre><span class="c-kw">local</span> amount = <span class="c-num">0.0</span>
+
+<span class="c-kw">local</span> collapse = <span class="c-fn">shader_load</span>(<span class="c-str">"collapse"</span>, <span class="c-str">[[
+    VARYING vec2 UV;
+    uniform sampler2D SCREEN;
+    uniform sampler2D MASK;
+    uniform vec2 MASK_OFFSET;
+    uniform vec2 MASK_SIZE;
+    uniform float amount;
+    uniform vec3 target_a;
+    uniform vec3 target_b;
+
+    void main() {
+        vec4 color = TEXTURE2D(SCREEN, UV);
+        vec2 mask_uv = (UV - MASK_OFFSET) / MASK_SIZE;
+        vec4 m = TEXTURE2D(MASK, mask_uv);
+
+        // off-white circle -> target A, red background -> target B
+        vec3 target = m.g > 0.5
+            ? target_a
+            : target_b;
+
+        float dist = distance(color.rgb, target);
+        float threshold = amount * 1.8;
+        float snap = step(dist, threshold);
+        FRAGCOLOR = vec4(
+            mix(color.rgb, target, snap),
+            color.a
+        );
+    }
+]]</span>, {
+  amount = <span class="c-num">0.0</span>,
+  target_a = <span class="c-fn">rgb</span>(<span class="c-num">11</span>),  <span class="c-comment">-- off-white</span>
+  target_b = <span class="c-fn">rgb</span>(<span class="c-num">7</span>),   <span class="c-comment">-- red</span>
+})
+
+<span class="c-comment">-- mask: off-white circle over red background</span>
+<span class="c-kw">local</span> mask = <span class="c-num">1</span>
+<span class="c-fn">rt_create</span>(mask, <span class="c-num">128</span>, <span class="c-num">128</span>)
+<span class="c-fn">rt_target</span>(mask)
+<span class="c-fn">rectf</span>(<span class="c-num">0</span>, <span class="c-num">0</span>, <span class="c-num">128</span>, <span class="c-num">128</span>, <span class="c-num">7</span>)
+<span class="c-fn">circf</span>(<span class="c-num">64</span>, <span class="c-num">64</span>, <span class="c-num">30</span>, <span class="c-num">11</span>)
+<span class="c-fn">rt_target</span>()
+
+<span class="c-kw">function</span> <span class="c-fn">_update</span>()
+  <span class="c-kw">if</span> <span class="c-fn">btn</span>(<span class="c-num">2</span>) <span class="c-kw">then</span>
+    amount = <span class="c-fn">min</span>(amount + <span class="c-num">0.02</span>, <span class="c-num">1.0</span>)
+  <span class="c-kw">end</span>
+  <span class="c-kw">if</span> <span class="c-fn">btn</span>(<span class="c-num">3</span>) <span class="c-kw">then</span>
+    amount = <span class="c-fn">max</span>(amount - <span class="c-num">0.02</span>, <span class="c-num">0.0</span>)
+  <span class="c-kw">end</span>
+  <span class="c-fn">shader_set</span>(collapse, <span class="c-str">"amount"</span>, amount)
+<span class="c-kw">end</span>
+
+<span class="c-kw">function</span> <span class="c-fn">_draw</span>()
+  <span class="c-fn">cls</span>(<span class="c-num">1</span>)
+  <span class="c-kw">for</span> i = <span class="c-num">1</span>, <span class="c-num">10</span> <span class="c-kw">do</span>
+    <span class="c-fn">rectf</span>(<span class="c-num">10</span>, <span class="c-num">10</span> + i * <span class="c-num">10</span>, <span class="c-num">118</span>, <span class="c-num">16</span> + i * <span class="c-num">10</span>, (i % <span class="c-num">15</span>) + <span class="c-num">1</span>)
+  <span class="c-kw">end</span>
+  <span class="c-kw">for</span> i = <span class="c-num">1</span>, <span class="c-num">5</span> <span class="c-kw">do</span>
+    <span class="c-fn">circf</span>(<span class="c-num">20</span> + i * <span class="c-num">20</span>, <span class="c-num">64</span> + <span class="c-fn">sin</span>(T + i) * <span class="c-num">20</span>, <span class="c-num">8</span>, (i % <span class="c-num">15</span>) + <span class="c-num">1</span>)
+  <span class="c-kw">end</span>
+
+  <span class="c-comment">-- apply shader only where mask is drawn</span>
+  <span class="c-fn">shader_apply</span>(collapse, mask)
+
+  <span class="c-fn">print</span>(<span class="c-str">"collapse: "</span> .. <span class="c-fn">string.format</span>(<span class="c-str">"%.2f"</span>, amount), <span class="c-num">4</span>, <span class="c-num">4</span>, <span class="c-num">7</span>)
+<span class="c-kw">end</span></pre>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ALTERNATIVES -->
+      <div class="final-section" style="margin-top: 1.5rem;">
+        <h2>WHAT NEXT</h2>
+        <p>You now know the core shader workflow: load, configure uniforms, update at runtime, and apply with masks. From here you can:</p>
+        <ul style="color: var(--dim); font-size: 0.85rem; margin-left: 1rem; margin-top: 0.5rem;">
+          <li>Write shaders that use <code>TIME</code> for animation</li>
+          <li>Use <code>PALETTE</code> to look up colors by index in GLSL</li>
+          <li>Animate the mask offset with the <code>x, y</code> args to <code>shader_apply</code></li>
+          <li>Stack multiple post-process shaders with <code>post_process_add</code> for layered effects</li>
+        </ul>
+        <p style="margin-top: 0.75rem;">Check the <a href="../../api.html#custom-shaders">shader API reference</a> for the full function list.</p>
+      </div>
+
+    </main>
+  </div>
+<script src="../tutorial.js"></script>
+<script defer src='https://static.cloudflareinsights.com/beacon.min.js' data-cf-beacon='{"token": "cc48fbbc3c48445f90d3c06acf5a97f8"}'></script>
+</body>
+</html>

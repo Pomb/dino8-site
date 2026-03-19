@@ -259,6 +259,29 @@ header p {
   letter-spacing: 0.05em;
 }
 
+.charset-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.8rem;
+  table-layout: fixed;
+}
+.charset-table th, .charset-table td { padding: 0.4rem 0.6rem; }
+.charset-table th {
+  text-align: left;
+  color: var(--accent);
+  border-bottom: 1px solid #2a2040;
+  font-weight: 600;
+  letter-spacing: 0.05em;
+}
+.charset-table td { border-bottom: 1px solid #1a1228; }
+.charset-table th:first-child, .charset-table td:first-child {
+  width: 14%;
+  white-space: nowrap;
+}
+.charset-table th:nth-child(2), .charset-table td:nth-child(2) {
+  width: 86%;
+}
+
 .glyph-table { table-layout: fixed; width: 520px; }
 .glyph-table .dino8-glyph { width: 40px; }
 .glyph-table td, .glyph-table th { padding: 0.4em 0.8em; white-space: nowrap; }

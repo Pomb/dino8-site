@@ -12,63 +12,67 @@
   <div class="tutorials-index">
     <a href="../" class="back">&larr; Dino8</a>
     <h1>TUTORIALS</h1>
-    <p class="subtitle">Step-by-step guides to build complete games.</p>
-
-    <div class="tutorial-card">
-      <div class="tutorial-row">
-        <div class="tutorial-text">
-          <h2>Breakout</h2>
-          <div class="tutorial-tags">
-            <span class="tag tag-beginner">beginner</span>
-          </div>
-          <p>Learn the core Dino8 workflow: project setup, drawing with primitives, handling input, managing game state, collision detection, and printing text to the screen.</p>
-          <a href="breakout.html" class="tutorial-btn">Build Breakout &rarr;</a>
-        </div>
-        <div class="carousel" id="breakoutCarousel">
-          <img src="images/breakout/breakout-01.gif" alt="Breakout step 1" class="active">
-          <img src="images/breakout/breakout-02.gif" alt="Breakout step 2">
-          <img src="images/breakout/breakout-03.gif" alt="Breakout step 3">
-          <div class="carousel-dots">
-            <span class="active" onclick="showSlide(0)"></span>
-            <span onclick="showSlide(1)"></span>
-            <span onclick="showSlide(2)"></span>
-          </div>
-        </div>
-      </div>
-    </div>
-
+    <p class="subtitle">Step-by-step guides to learn how Dino8 works.</p>
+    <div id="tutorial-list"></div>
   </div>
 
+  <script src="../components/carousel.js"></script>
   <script>
+    var tutorials = [
+      {
+        title: "Breakout",
+        tags: ["drawing", "input", "audio", "game logic"],
+        description: "Learn the core Dino8 workflow: project setup, drawing with primitives, handling input, managing game state, collision detection, and printing text to the screen.",
+        href: "breakout/",
+        label: "Build Breakout",
+        images: [
+          "breakout/breakout-01.gif",
+          "breakout/breakout-02.gif",
+          "breakout/breakout-03.gif",
+        ],
+      },
+      {
+        title: "Shaders",
+        tags: ["shaders", "render targets"],
+        description: "Write custom fragment shaders in GLSL. Load them from file or inline, set uniforms, update values at runtime, and apply effects to specific screen regions with masks.",
+        href: "shaders-1/",
+        label: "Build Shaders",
+        images: [
+          "shaders-1/shaders-1-01.gif",
+        ],
+      },
+    ];
+
     (function() {
-      const imgs = document.querySelectorAll('#breakoutCarousel img');
-      const dots = document.querySelectorAll('#breakoutCarousel .carousel-dots span');
-      let current = 0;
-      let timer;
+      var list = document.getElementById('tutorial-list');
 
-      function show(i) {
-        imgs[current].classList.remove('active');
-        dots[current].classList.remove('active');
-        current = i;
-        imgs[current].classList.add('active');
-        dots[current].classList.add('active');
-      }
+      tutorials.forEach(function(t) {
+        var card = document.createElement('div');
+        card.className = 'tutorial-card';
 
-      function advance() {
-        show((current + 1) % imgs.length);
-      }
+        var tags = t.tags.map(function(tag) {
+          return '<span class="tag">' + tag + '</span>';
+        }).join('');
 
-      function startTimer() {
-        clearInterval(timer);
-        timer = setInterval(advance, 4000);
-      }
+        var carouselWrap = document.createElement('div');
+        carouselWrap.className = 'carousel-wrap';
 
-      window.showSlide = function(i) {
-        show(i);
-        startTimer();
-      };
+        card.innerHTML = '<div class="tutorial-row">' +
+          '<div class="tutorial-text">' +
+            '<h2>' + t.title + '</h2>' +
+            '<div class="tutorial-tags">' + tags + '</div>' +
+            '<p>' + t.description + '</p>' +
+            '<a href="' + t.href + '" class="tutorial-btn">' + t.label + ' &rarr;</a>' +
+          '</div>' +
+        '</div>';
 
-      startTimer();
+        if (t.images.length > 0) {
+          card.querySelector('.tutorial-row').appendChild(carouselWrap);
+          Carousel.create(carouselWrap, t.images, t.title, 4000);
+        }
+
+        list.appendChild(card);
+      });
     })();
   </script>
 <script defer src='https://static.cloudflareinsights.com/beacon.min.js' data-cf-beacon='{"token": "cc48fbbc3c48445f90d3c06acf5a97f8"}'></script>

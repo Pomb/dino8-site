@@ -1,7 +1,7 @@
 /* Tutorials index layout */
 
 .tutorials-index {
-  max-width: 620px;
+  max-width: 820px;
   margin: 0 auto;
   padding: 2rem 1.5rem;
 }
@@ -77,9 +77,9 @@
   border-radius: 3px;
 }
 
-.tag-beginner {
-  color: var(--green);
-  border: 1px solid var(--green);
+.tag {
+  color: var(--dim);
+  border: 1px solid #2a2040;
 }
 
 .tutorial-btn {
@@ -109,8 +109,11 @@
 
 /* Carousel */
 
-.carousel {
+.carousel-wrap {
   flex: 0 0 240px;
+}
+
+.carousel {
   position: relative;
   border: 1px solid #2a2040;
   border-radius: 4px;
@@ -138,8 +141,9 @@
 .carousel-dots {
   display: flex;
   justify-content: center;
+  align-items: center;
   gap: 0.4rem;
-  padding: 0.4rem 0;
+  min-height: calc(6px + 0.8rem);
   background: var(--bg2);
 }
 
@@ -156,11 +160,33 @@
   background: var(--accent);
 }
 
+/* Tutorial nav dots (switch between tutorials on home page) */
+
+.tutorial-nav-dots {
+  display: flex;
+  justify-content: center;
+  gap: 0.4rem;
+  padding-top: 0.75rem;
+}
+
+.tutorial-nav-dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: #4E4A4E;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+.tutorial-nav-dot.active {
+  background: var(--accent);
+}
+
 @media (max-width: 500px) {
   .tutorial-row {
     flex-direction: column;
   }
-  .carousel {
+  .carousel-wrap {
     flex: none;
     width: 100%;
     max-width: 240px;

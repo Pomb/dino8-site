@@ -105,33 +105,17 @@
     </section>
 
     <section id="tutorials">
-      <h2>TUTORIALS</h2>
-      <div class="tutorial-row">
-        <div class="tutorial-text">
-          <h2>Breakout</h2>
-          <div class="tutorial-tags">
-            <span class="tag tag-beginner">beginner</span>
-          </div>
-          <p>Learn the core Dino8 workflow: project setup, drawing with primitives, handling input, managing game state, collision detection, and printing text to the screen.</p>
-          <a href="tutorials/breakout.html" class="tutorial-btn">Build Breakout &rarr;</a>
-        </div>
-        <div class="carousel" id="tutorialCarousel">
-          <img src="tutorials/images/breakout/breakout-01.gif" alt="Breakout step 1" class="active">
-          <img src="tutorials/images/breakout/breakout-02.gif" alt="Breakout step 2">
-          <img src="tutorials/images/breakout/breakout-03.gif" alt="Breakout step 3">
-          <div class="carousel-dots">
-            <span class="active" onclick="showSlide(0)"></span>
-            <span onclick="showSlide(1)"></span>
-            <span onclick="showSlide(2)"></span>
-          </div>
-        </div>
+      <div class="cli-header">
+        <h2>TUTORIALS</h2>
+        <a href="tutorials/" class="cli-toggle" style="text-decoration:none;">view all</a>
       </div>
+      <div id="tutorialCard"></div>
     </section>
 
     <section>
       <div class="cli-header">
         <h2>API SAMPLE</h2>
-        <button class="cli-toggle" onclick="copyApiSample(this)">copy</button>
+        <button class="cli-toggle" data-copy=".api-sample" onclick="copyBlock(this)">copy</button>
       </div>
 <pre class="api-sample"><span class="c-comment">-- called once at startup</span>
 <span class="c-kw">function</span> <span class="c-fn">_init</span>()
@@ -278,10 +262,13 @@
     </footer>
   </div>
 
+  <script src="components/carousel.js"></script>
   <script>
-    function copyApiSample(btn) {
-      var text = btn.closest('section').querySelector('pre').textContent;
-      navigator.clipboard.writeText(text).then(function() {
+    function copyBlock(btn) {
+      var selector = btn.getAttribute('data-copy');
+      var el = selector ? document.querySelector(selector) : null;
+      if (!el) return;
+      navigator.clipboard.writeText(el.textContent).then(function() {
         btn.textContent = 'copied';
         setTimeout(function() { btn.textContent = 'copy'; }, 1500);
       });
@@ -580,43 +567,116 @@
       if (e.key === 'Enter') submitCode();
     });
 
-    // Tutorial carousel
+    // Tutorial carousel — cycles through all tutorials
     (function() {
-      const imgs = document.querySelectorAll('#tutorialCarousel img');
-      const dots = document.querySelectorAll('#tutorialCarousel .carousel-dots span');
-      let current = 0;
-      let timer;
+      var tutorials = [
+        {
+          title: "Breakout",
+          tags: ["drawing", "input", "audio", "game logic"],
+          description: "Learn the core Dino8 workflow: project setup, drawing with primitives, handling input, managing game state, collision detection, and printing text to the screen.",
+          href: "tutorials/breakout/",
+          label: "Build Breakout",
+          images: [
+            "tutorials/breakout/breakout-01.gif",
+            "tutorials/breakout/breakout-02.gif",
+            "tutorials/breakout/breakout-03.gif",
+          ],
+        },
+        {
+          title: "Shaders",
+          tags: ["shaders", "render targets"],
+          description: "Write custom fragment shaders in GLSL. Load them from file or inline, set uniforms, update values at runtime, and apply effects to specific screen regions with masks.",
+          href: "tutorials/shaders-1/",
+          label: "Build Shaders",
+          images: [
+            "tutorials/shaders-1/shaders-1-01.gif",
+          ],
+        },
+      ];
 
-      function show(i) {
-        imgs[current].classList.remove('active');
-        dots[current].classList.remove('active');
-        current = i;
-        imgs[current].classList.add('active');
-        dots[current].classList.add('active');
+      var container = document.getElementById('tutorialCard');
+      var current = 0;
+      var activeCarousel = null;
+
+      function render(idx) {
+        var t = tutorials[idx];
+        var tags = t.tags.map(function(tag) {
+          return '<span class="tag">' + tag + '</span>';
+        }).join('');
+
+        var navDots = tutorials.length > 1
+          ? '<div class="tutorial-nav-dots">' + tutorials.map(function(_, i) {
+              return '<span class="tutorial-nav-dot' + (i === idx ? ' active' : '') + '" data-idx="' + i + '"></span>';
+            }).join('') + '</div>'
+          : '';
+
+        container.innerHTML = '<div class="tutorial-row">' +
+          '<div class="tutorial-text">' +
+            '<h2>' + t.title + '</h2>' +
+            '<div class="tutorial-tags">' + tags + '</div>' +
+            '<p>' + t.description + '</p>' +
+            '<a href="' + t.href + '" class="tutorial-btn">' + t.label + ' &rarr;</a>' +
+          '</div>' +
+          '<div class="carousel-wrap"></div>' +
+        '</div>' +
+        navDots;
+
+        if (activeCarousel) activeCarousel.destroy();
+        activeCarousel = null;
+        if (t.images.length > 0) {
+          activeCarousel = Carousel.create(
+            container.querySelector('.carousel-wrap'),
+            t.images, t.title, 4000
+          );
+        }
+
+        // Tutorial nav dots
+        container.querySelectorAll('.tutorial-nav-dot').forEach(function(dot) {
+          dot.addEventListener('click', function() {
+            current = parseInt(dot.dataset.idx);
+            render(current);
+            clearInterval(tutorialTimer);
+            tutorialTimer = setInterval(advance, 8000);
+          });
+        });
       }
 
       function advance() {
-        show((current + 1) % imgs.length);
+        current = (current + 1) % tutorials.length;
+        render(current);
       }
 
-      function startTimer() {
-        clearInterval(timer);
-        timer = setInterval(advance, 4000);
+      render(0);
+
+      // Lock container height after all tutorial images are loaded to prevent layout jump
+      var allSrcs = tutorials.reduce(function(a, t) { return a.concat(t.images); }, []);
+      var loaded = 0;
+      function checkLock() {
+        loaded++;
+        if (loaded >= allSrcs.length) {
+          var maxH = 0;
+          tutorials.forEach(function(_, i) {
+            render(i);
+            maxH = Math.max(maxH, container.offsetHeight);
+          });
+          container.style.minHeight = maxH + 'px';
+          render(0);
+        }
       }
+      allSrcs.forEach(function(src) {
+        var img = new Image();
+        img.onload = img.onerror = checkLock;
+        img.src = src;
+      });
 
-      window.showSlide = function(i) {
-        show(i);
-        startTimer();
-      };
-
-      startTimer();
+      var tutorialTimer = tutorials.length > 1 ? setInterval(advance, 8000) : null;
     })();
 
-    // Fetch latest version from worker (cached for 12 hours)
+    // Fetch latest version from worker (cached for 1 hours)
     (function() {
       const CACHE_KEY = 'dino8_version';
       const CACHE_TS_KEY = 'dino8_version_ts';
-      const CACHE_TTL = 12 * 60 * 60 * 1000; // 12 hours in ms
+      const CACHE_TTL = 1 * 60 * 60 * 1000; // 1 hours in ms
       const badge = document.getElementById('versionBadge');
 
       const cached = localStorage.getItem(CACHE_KEY);
